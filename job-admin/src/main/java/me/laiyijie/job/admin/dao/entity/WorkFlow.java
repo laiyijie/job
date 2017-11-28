@@ -1,5 +1,7 @@
 package me.laiyijie.job.admin.dao.entity;
 
+import me.laiyijie.job.admin.dao.state.RunningStatus;
+
 import javax.persistence.*;
 
 /**
@@ -16,6 +18,7 @@ public class WorkFlow {
     private String name;
     private String description;
     private Integer runInterval;
+    private String status;
 
     public WorkFlow() {
     }
@@ -24,6 +27,15 @@ public class WorkFlow {
         this.name = name;
         this.description = description;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 
     public Integer getId() {
         return id;

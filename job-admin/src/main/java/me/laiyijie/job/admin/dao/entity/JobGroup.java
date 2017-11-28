@@ -1,5 +1,7 @@
 package me.laiyijie.job.admin.dao.entity;
 
+import me.laiyijie.job.admin.dao.state.RunningStatus;
+
 import javax.persistence.*;
 
 /**
@@ -22,6 +24,15 @@ public class JobGroup {
     @ManyToOne
     @JoinColumn(name = "pre_job_group_id")
     private JobGroup preJobGroup;
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Integer getId() {
         return id;
