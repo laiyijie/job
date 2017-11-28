@@ -13,10 +13,31 @@ public class TbJob {
     private Integer id;
     private String name;
     private String description;
+    private String status;
+    private String script;
+
     @ManyToOne
     @JoinColumn(name = "job_group_id")
     private TbJobGroup jobGroup;
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "executor_group_id")
+    private TbExecutorGroup executorGroup;
+
+    public TbExecutorGroup getExecutorGroup() {
+        return executorGroup;
+    }
+
+    public void setExecutorGroup(TbExecutorGroup executorGroup) {
+        this.executorGroup = executorGroup;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
+    }
 
     public String getStatus() {
         return status;

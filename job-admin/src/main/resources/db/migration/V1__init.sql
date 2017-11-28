@@ -1,3 +1,13 @@
+CREATE TABLE admin_user (
+  id       INT(11) AUTO_INCREMENT,
+  username VARCHAR(45),
+  name     VARCHAR(45),
+  password VARCHAR(450),
+  PRIMARY KEY (id)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
 CREATE TABLE executor_group (
   id          INT(11) AUTO_INCREMENT,
   name        VARCHAR(45),
@@ -57,6 +67,7 @@ CREATE TABLE job (
   job_group_id      INT(10),
   status            VARCHAR(45),
   executor_group_id INT(11),
+  script VARCHAR(2048),
   PRIMARY KEY (id),
   CONSTRAINT fk_job_to_job_group_id FOREIGN KEY (job_group_id) REFERENCES job_group (id)
     ON DELETE CASCADE

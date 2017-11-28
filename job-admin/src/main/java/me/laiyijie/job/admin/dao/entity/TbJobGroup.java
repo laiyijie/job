@@ -14,6 +14,7 @@ public class TbJobGroup {
 
     private String name;
     private String description;
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "work_flow_id")
@@ -22,7 +23,6 @@ public class TbJobGroup {
     @ManyToOne
     @JoinColumn(name = "pre_job_group_id")
     private TbJobGroup preJobGroup;
-    private String status;
 
     public String getStatus() {
         return status;
