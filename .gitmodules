@@ -1,0 +1,3 @@
+[submodule "libs/job-swagger-api"]
+	path = libs/job-swagger-api
+	url = git@github.com:laiyijie/job-swagger-api.git
