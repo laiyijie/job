@@ -1,7 +1,5 @@
 package me.laiyijie.job.admin.dao.entity;
 
-import me.laiyijie.job.admin.dao.state.RunningStatus;
-
 import javax.persistence.*;
 
 /**
@@ -9,7 +7,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "job_group")
-public class JobGroup {
+public class TbJobGroup {
     @Id
     @GeneratedValue
     private Integer id;
@@ -19,11 +17,11 @@ public class JobGroup {
 
     @ManyToOne
     @JoinColumn(name = "work_flow_id")
-    private WorkFlow workFlow;
+    private TbWorkFlow workFlow;
 
     @ManyToOne
     @JoinColumn(name = "pre_job_group_id")
-    private JobGroup preJobGroup;
+    private TbJobGroup preJobGroup;
     private String status;
 
     public String getStatus() {
@@ -58,19 +56,19 @@ public class JobGroup {
         this.description = description;
     }
 
-    public WorkFlow getWorkFlow() {
+    public TbWorkFlow getWorkFlow() {
         return workFlow;
     }
 
-    public void setWorkFlow(WorkFlow workFlow) {
+    public void setWorkFlow(TbWorkFlow workFlow) {
         this.workFlow = workFlow;
     }
 
-    public JobGroup getPreJobGroup() {
+    public TbJobGroup getPreJobGroup() {
         return preJobGroup;
     }
 
-    public void setPreJobGroup(JobGroup preJobGroup) {
+    public void setPreJobGroup(TbJobGroup preJobGroup) {
         this.preJobGroup = preJobGroup;
     }
 }

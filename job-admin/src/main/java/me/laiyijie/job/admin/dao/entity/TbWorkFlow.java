@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "work_flow")
-public class WorkFlow {
+public class TbWorkFlow {
     @Id
     @GeneratedValue
     private Integer id;
@@ -20,10 +20,10 @@ public class WorkFlow {
     private Integer runInterval;
     private String status;
 
-    public WorkFlow() {
+    public TbWorkFlow() {
     }
 
-    public WorkFlow(String name, String description) {
+    public TbWorkFlow(String name, String description) {
         this.name = name;
         this.description = description;
     }

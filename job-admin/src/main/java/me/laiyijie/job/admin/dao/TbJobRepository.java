@@ -1,6 +1,6 @@
 package me.laiyijie.job.admin.dao;
 
-import me.laiyijie.job.admin.dao.entity.Job;
+import me.laiyijie.job.admin.dao.entity.TbJob;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -8,6 +8,6 @@ import java.util.List;
 /**
  * Created by laiyijie on 11/27/17.
  */
-public interface JobRepository extends CrudRepository<Job, Integer> {
-    List<Job> findAll();
+public interface TbJobRepository extends CrudRepository<TbJob, Integer> {
+    List<TbJob> findAll();
 }
