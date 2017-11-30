@@ -19,4 +19,11 @@ public class StopJobMsg implements Serializable {
     public void setJobId(Integer jobId) {
         this.jobId = jobId;
     }
+
+    @Override
+    public String toString() {
+        return "StopJobMsg{" +
+                "jobId=" + jobId +
+                '}';
+    }
 }

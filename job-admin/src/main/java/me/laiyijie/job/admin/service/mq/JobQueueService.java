@@ -2,6 +2,8 @@ package me.laiyijie.job.admin.service.mq;
 
 import me.laiyijie.job.message.command.HeartBeatMsg;
 import me.laiyijie.job.message.command.JobStatusMsg;
+import me.laiyijie.job.message.executor.RunJobMsg;
+import me.laiyijie.job.message.executor.StopJobMsg;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -18,9 +20,11 @@ public class JobQueueService {
     @Autowired
     private AmqpTemplate amqpTemplate;
 
-    public void sendMessageToCommandQueue(Object msg) {
-        amqpTemplate.convertAndSend(jobQueueNameService.getCommandQueueName(), msg);
+    public void sendRunJobToExecutor(String executorName, RunJobMsg jobMsg) {
+        amqpTemplate.convertAndSend(jobQueueNameService.getExecutorQueueName(executorName), jobMsg);
     }
 
-
+    public void sendStopJobToExecutor(String executorName, StopJobMsg jobMsg) {
+        amqpTemplate.convertAndSend(jobQueueNameService.getExecutorQueueName(executorName), jobMsg);
+    }
 }

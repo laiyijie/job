@@ -42,4 +42,13 @@ public class RunningLogMsg implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "RunningLogMsg{" +
+                "jobId=" + jobId +
+                ", error=" + error +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

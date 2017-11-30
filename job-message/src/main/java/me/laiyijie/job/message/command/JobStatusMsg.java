@@ -31,4 +31,12 @@ public class JobStatusMsg implements Serializable,RunningStatus{
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "JobStatusMsg{" +
+                "jobId=" + jobId +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

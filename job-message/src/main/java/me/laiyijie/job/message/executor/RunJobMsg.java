@@ -30,4 +30,12 @@ public class RunJobMsg implements Serializable {
     public void setJobCommand(String jobCommand) {
         this.jobCommand = jobCommand;
     }
+
+    @Override
+    public String toString() {
+        return "RunJobMsg{" +
+                "jobId=" + jobId +
+                ", jobCommand='" + jobCommand + '\'' +
+                '}';
+    }
 }
