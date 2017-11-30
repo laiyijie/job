@@ -1,6 +1,7 @@
 package me.laiyijie.job.admin.dao;
 
 import com.alibaba.fastjson.JSON;
+import me.laiyijie.job.admin.dao.entity.TbJob;
 import me.laiyijie.job.admin.dao.entity.TbJobGroup;
 import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
 import me.laiyijie.job.message.RunningStatus;
@@ -62,6 +63,13 @@ public class RepoTest {
         tbJobGroup1.setWorkFlow(tbWorkFlowRepository.findOne(1));
         tbJobGroup1.setPreJobGroup(tbJobGroup);
         tbJobGroupRepository.save(tbJobGroup1);
+
+        TbJob tbJob = new TbJob();
+        tbJob.setName("1st");
+        tbJob.setJobGroup(tbJobGroup);
+        tbJobRepository.save(tbJob);
+        log.info(JSON.toJSONString(tbJobGroupRepository.findAllByWorkFlow_Id(1)));
+        log.info(JSON.toJSONString(tbJobRepository.findALlByJobGroup_WorkFlow_id(1)));
 
         log.info(JSON.toJSONString(tbJobGroupRepository.findAll()));
     }

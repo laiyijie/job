@@ -29,7 +29,6 @@ public class CommandHandler {
 
     @RabbitHandler
     public void handle(HeartBeatMsg heartBeatMsg) {
-        //TODO need to finish
         log.info("heart beat receive : " + heartBeatMsg);
         if (heartBeatMsg.getExecutorName() ==null || heartBeatMsg.getGroupName() == null
                 || "".equals(heartBeatMsg.getExecutorName()) || "".equals(heartBeatMsg.getGroupName())){
@@ -63,6 +62,7 @@ public class CommandHandler {
     public void handle(JobStatusMsg jobStatusMsg) {
         //TODO need to finish
         log.info("job status msg recevive: " + jobStatusMsg);
+
     }
 
 

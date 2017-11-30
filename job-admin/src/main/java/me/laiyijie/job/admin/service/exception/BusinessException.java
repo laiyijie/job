@@ -7,16 +7,16 @@ public class BusinessException extends RuntimeException {
     private Integer code;
     private String msg;
 
-    BusinessException() {
+    public BusinessException() {
         this(500, "undifined error");
     }
 
-    BusinessException(Integer code, String msg) {
+    public BusinessException(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    BusinessException(String msg) {
+    public BusinessException(String msg) {
         this(400, msg);
     }
 

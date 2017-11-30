@@ -15,14 +15,12 @@ public class TbJobGroup {
     private String name;
     private String description;
     private String status;
+    private Integer step;
 
     @ManyToOne
     @JoinColumn(name = "work_flow_id")
     private TbWorkFlow workFlow;
 
-    @ManyToOne
-    @JoinColumn(name = "pre_job_group_id")
-    private TbJobGroup preJobGroup;
 
     public String getStatus() {
         return status;
@@ -64,11 +62,11 @@ public class TbJobGroup {
         this.workFlow = workFlow;
     }
 
-    public TbJobGroup getPreJobGroup() {
-        return preJobGroup;
+    public Integer getStep() {
+        return step;
     }
 
-    public void setPreJobGroup(TbJobGroup preJobGroup) {
-        this.preJobGroup = preJobGroup;
+    public void setStep(Integer step) {
+        this.step = step;
     }
 }
