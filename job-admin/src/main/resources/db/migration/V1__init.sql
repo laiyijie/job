@@ -9,7 +9,7 @@ CREATE TABLE admin_user (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE executor_group (
-  name        VARCHAR(45),
+  name        VARCHAR(256),
   description VARCHAR(450),
   PRIMARY KEY (name)
 )
@@ -17,12 +17,11 @@ CREATE TABLE executor_group (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE executor (
-  id                  INT(11) AUTO_INCREMENT,
-  name                VARCHAR(45),
+  name                VARCHAR(256),
   executor_group_name VARCHAR(45),
   ip_address          VARCHAR(200),
   online_status       VARCHAR(45),
-  PRIMARY KEY (id),
+  PRIMARY KEY (name),
   CONSTRAINT fk_executor_to_executor_group_id FOREIGN KEY (executor_group_name) REFERENCES executor_group (name)
     ON DELETE CASCADE
     ON UPDATE CASCADE
@@ -31,11 +30,13 @@ CREATE TABLE executor (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE work_flow (
-  id           INT(11) AUTO_INCREMENT,
-  name         VARCHAR(45),
-  description  VARCHAR(200),
-  run_interval INT(11),
-  status       VARCHAR(45),
+  id            INT(11) AUTO_INCREMENT,
+  name          VARCHAR(45),
+  description   VARCHAR(200),
+  run_interval  INT(11),
+  status        VARCHAR(45),
+  last_run_time BIGINT(20),
+  scheduled     BOOLEAN,
   PRIMARY KEY (id)
 )
   ENGINE = InnoDB

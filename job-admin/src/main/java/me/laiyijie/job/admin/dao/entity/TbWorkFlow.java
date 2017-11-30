@@ -17,6 +17,8 @@ public class TbWorkFlow {
     private String description;
     private Integer runInterval;
     private String status;
+    private Long lastRunTime;
+    private Boolean scheduled;
 
     public TbWorkFlow() {
     }
@@ -24,6 +26,22 @@ public class TbWorkFlow {
     public TbWorkFlow(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    public Long getLastRunTime() {
+        return lastRunTime;
+    }
+
+    public void setLastRunTime(Long lastRunTime) {
+        this.lastRunTime = lastRunTime;
+    }
+
+    public Boolean getScheduled() {
+        return scheduled;
+    }
+
+    public void setScheduled(Boolean scheduled) {
+        this.scheduled = scheduled;
     }
 
     public String getStatus() {

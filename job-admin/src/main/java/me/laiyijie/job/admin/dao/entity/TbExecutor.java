@@ -14,8 +14,6 @@ public class TbExecutor {
     public static String OFFLINE = "OFFLINE";
 
     @Id
-    @GeneratedValue
-    private Integer id;
     private String name;
     private String ipAddress;
     private String onlineStatus;
@@ -23,14 +21,6 @@ public class TbExecutor {
     @ManyToOne
     @JoinColumn(name = "executor_group_name")
     private TbExecutorGroup executorGroup;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
