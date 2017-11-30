@@ -1,7 +1,5 @@
 package me.laiyijie.job.admin.dao.entity;
 
-import me.laiyijie.job.admin.dao.state.RunningStatus;
-
 import javax.persistence.*;
 
 /**

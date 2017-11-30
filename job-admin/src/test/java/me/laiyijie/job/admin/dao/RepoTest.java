@@ -3,7 +3,7 @@ package me.laiyijie.job.admin.dao;
 import com.alibaba.fastjson.JSON;
 import me.laiyijie.job.admin.dao.entity.TbJobGroup;
 import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
-import me.laiyijie.job.admin.dao.state.RunningStatus;
+import me.laiyijie.job.message.RunningStatus;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
 import org.junit.Test;

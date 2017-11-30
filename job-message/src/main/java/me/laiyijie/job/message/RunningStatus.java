@@ -1,4 +1,4 @@
-package me.laiyijie.job.admin.dao.state;
+package me.laiyijie.job.message;
 
 /**
  * Created by laiyijie on 11/28/17.

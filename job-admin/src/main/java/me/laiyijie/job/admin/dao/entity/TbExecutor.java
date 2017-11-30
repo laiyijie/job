@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "executor")
+@Table(name = "worker")
 public class TbExecutor {
 
     public static String ONLINE = "ONLINE";
@@ -21,7 +21,7 @@ public class TbExecutor {
     private String onlineStatus;
 
     @ManyToOne
-    @JoinColumn(name = "executor_group_id")
+    @JoinColumn(name = "executor_group_name")
     private TbExecutorGroup executorGroup;
 
     public Integer getId() {

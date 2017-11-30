@@ -9,22 +9,21 @@ CREATE TABLE admin_user (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE executor_group (
-  id          INT(11) AUTO_INCREMENT,
   name        VARCHAR(45),
   description VARCHAR(450),
-  PRIMARY KEY (id)
+  PRIMARY KEY (name)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE executor (
-  id                INT(11) AUTO_INCREMENT,
-  name              VARCHAR(45),
-  executor_group_id INT(11),
-  ip_address        VARCHAR(200),
-  online_status     VARCHAR(45),
+  id                  INT(11) AUTO_INCREMENT,
+  name                VARCHAR(45),
+  executor_group_name VARCHAR(45),
+  ip_address          VARCHAR(200),
+  online_status       VARCHAR(45),
   PRIMARY KEY (id),
-  CONSTRAINT fk_executor_to_executor_group_id FOREIGN KEY (executor_group_id) REFERENCES executor_group (id)
+  CONSTRAINT fk_executor_to_executor_group_id FOREIGN KEY (executor_group_name) REFERENCES executor_group (name)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 )
@@ -61,18 +60,18 @@ CREATE TABLE job_group (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE job (
-  id                INT(11) AUTO_INCREMENT,
-  name              VARCHAR(45),
-  description       VARCHAR(200),
-  job_group_id      INT(10),
-  status            VARCHAR(45),
-  executor_group_id INT(11),
-  script VARCHAR(2048),
+  id                  INT(11) AUTO_INCREMENT,
+  name                VARCHAR(45),
+  description         VARCHAR(200),
+  job_group_id        INT(10),
+  status              VARCHAR(45),
+  executor_group_name VARCHAR(45),
+  script              VARCHAR(2048),
   PRIMARY KEY (id),
   CONSTRAINT fk_job_to_job_group_id FOREIGN KEY (job_group_id) REFERENCES job_group (id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT fk_job_to_executor_group_id FOREIGN KEY (executor_group_id) REFERENCES executor_group (id)
+  CONSTRAINT fk_job_to_executor_group_id FOREIGN KEY (executor_group_name) REFERENCES executor_group (name)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 )

@@ -20,7 +20,7 @@ public class TbJob {
     @JoinColumn(name = "job_group_id")
     private TbJobGroup jobGroup;
     @ManyToOne
-    @JoinColumn(name = "executor_group_id")
+    @JoinColumn(name = "executor_group_name")
     private TbExecutorGroup executorGroup;
 
     public TbExecutorGroup getExecutorGroup() {
