@@ -19,8 +19,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class Application {
     private Logger log = LoggerFactory.getLogger(Application.class);
-    @Value("${job.executor.name}")
-    public String EXECUTOR_NAME;
     @Autowired
     private JobRunnerService jobRunnerService;
 

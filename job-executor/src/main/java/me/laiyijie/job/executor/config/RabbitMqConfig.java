@@ -1,5 +1,6 @@
-package me.laiyijie.job.executor.service;
+package me.laiyijie.job.executor.config;
 
+import me.laiyijie.job.executor.service.JobQueueNameService;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

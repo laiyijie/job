@@ -1,5 +1,6 @@
-package me.laiyijie.job.executor.service;
+package me.laiyijie.job.executor.runner;
 
+import me.laiyijie.job.executor.service.JobQueueService;
 import me.laiyijie.job.message.command.JobStatusMsg;
 import me.laiyijie.job.message.executor.RunJobMsg;
 import me.laiyijie.job.message.log.RunningLogMsg;
@@ -7,22 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 /**
  * Created by laiyijie on 11/30/17.
  */
-public class ShellCommandThread implements Runnable {
+public class ShellCommandRunner implements Runnable {
     private JobQueueService jobQueueService;
-    private ConcurrentHashMap<Integer, ShellCommandThread> runningJobMap;
-    private Logger log = LoggerFactory.getLogger(ShellCommandThread.class);
+    private ConcurrentHashMap<Integer, ShellCommandRunner> runningJobMap;
+    private Logger log = LoggerFactory.getLogger(ShellCommandRunner.class);
     private boolean stop;
     private RunJobMsg runJob;
     private Executor executor;
 
-    public ShellCommandThread(RunJobMsg runJob, JobQueueService jobQueueService, ConcurrentHashMap<Integer, ShellCommandThread> runningJobMap, Executor executor) {
+    public ShellCommandRunner(RunJobMsg runJob, JobQueueService jobQueueService, ConcurrentHashMap<Integer, ShellCommandRunner> runningJobMap, Executor executor) {
         this.runJob = runJob;
         this.stop = false;
         this.jobQueueService = jobQueueService;

@@ -1,5 +1,6 @@
-package me.laiyijie.job.executor.service;
+package me.laiyijie.job.executor.runner;
 
+import me.laiyijie.job.executor.service.JobQueueService;
 import me.laiyijie.job.message.command.HeartBeatMsg;
 import me.laiyijie.job.message.command.JobStatusMsg;
 import org.springframework.beans.factory.annotation.Autowired;

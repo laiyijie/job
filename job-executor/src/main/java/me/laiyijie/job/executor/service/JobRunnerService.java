@@ -1,5 +1,6 @@
 package me.laiyijie.job.executor.service;
 
+import me.laiyijie.job.executor.runner.ShellCommandRunner;
 import me.laiyijie.job.message.executor.RunJobMsg;
 import me.laiyijie.job.message.executor.StopJobMsg;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ public class JobRunnerService {
     private Executor executor = Executors.newCachedThreadPool();
 
     private Logger log = LoggerFactory.getLogger(JobRunnerService.class);
-    private ConcurrentHashMap<Integer, ShellCommandThread> runningJobMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, ShellCommandRunner> runningJobMap = new ConcurrentHashMap<>();
 
     public void runShell(RunJobMsg runJob) {
         if (runningJobMap.containsKey(runJob.getJobId())) {
@@ -29,7 +30,7 @@ public class JobRunnerService {
             log.error("the job already run in this executor : " + runJob.getJobId());
             return;
         }
-        ShellCommandThread shellCommandThread = new ShellCommandThread(runJob, jobQueueService, runningJobMap, executor);
+        ShellCommandRunner shellCommandThread = new ShellCommandRunner(runJob, jobQueueService, runningJobMap, executor);
         Thread t = new Thread(shellCommandThread);
         t.start();
     }
