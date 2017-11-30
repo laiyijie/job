@@ -31,8 +31,7 @@ public class JobRunnerService {
             return;
         }
         ShellCommandRunner shellCommandThread = new ShellCommandRunner(runJob, jobQueueService, runningJobMap, executor);
-        Thread t = new Thread(shellCommandThread);
-        t.start();
+        executor.execute(shellCommandThread);
     }
 
     public void stopShell(StopJobMsg stopJobMsg) {

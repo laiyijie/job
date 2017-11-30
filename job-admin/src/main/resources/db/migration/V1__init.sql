@@ -21,6 +21,7 @@ CREATE TABLE executor (
   executor_group_name VARCHAR(45),
   ip_address          VARCHAR(200),
   online_status       VARCHAR(45),
+  last_heart_beat_time BIGINT(20),
   PRIMARY KEY (name),
   CONSTRAINT fk_executor_to_executor_group_id FOREIGN KEY (executor_group_name) REFERENCES executor_group (name)
     ON DELETE CASCADE

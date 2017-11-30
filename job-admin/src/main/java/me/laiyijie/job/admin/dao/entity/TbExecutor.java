@@ -17,10 +17,19 @@ public class TbExecutor {
     private String name;
     private String ipAddress;
     private String onlineStatus;
+    private Long lastHeartBeatTime;
 
     @ManyToOne
     @JoinColumn(name = "executor_group_name")
     private TbExecutorGroup executorGroup;
+
+    public Long getLastHeartBeatTime() {
+        return lastHeartBeatTime;
+    }
+
+    public void setLastHeartBeatTime(Long lastHeartBeatTime) {
+        this.lastHeartBeatTime = lastHeartBeatTime;
+    }
 
     public String getName() {
         return name;

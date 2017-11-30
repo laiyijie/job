@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = "#{jobQueueNameService.getLogQueueName()}")
 public class LogHandler {
     private Logger log = LoggerFactory.getLogger(LogHandler.class);
-    @Autowired
-    private JobQueueNameService jobQueueNameService;
 
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
