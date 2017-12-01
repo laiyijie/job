@@ -7,7 +7,7 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "worker")
+@Table(name = "executor")
 public class TbExecutor {
 
     public static String ONLINE = "ONLINE";

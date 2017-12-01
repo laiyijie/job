@@ -47,7 +47,7 @@ public class ShellCommandRunner implements Runnable {
             PrintWriter writer = new PrintWriter(tmpFileName, "UTF-8");
             writer.println(runJob.getJobCommand());
             writer.close();
-            Runtime.getRuntime().exec("chmod 777 " + tmpFileName);
+            Runtime.getRuntime().exec("chmod 777 " + tmpFileName).waitFor();
             ProcessBuilder pb = new ProcessBuilder(tmpFileName);
             Process proc = pb.start();
             executor.execute(() -> {

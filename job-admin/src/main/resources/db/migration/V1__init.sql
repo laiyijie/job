@@ -53,9 +53,6 @@ CREATE TABLE job_group (
   PRIMARY KEY (id),
   CONSTRAINT fk_job_group_to_work_flow_id FOREIGN KEY (work_flow_id) REFERENCES work_flow (id)
     ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_pre_job_group_to_job_group_id FOREIGN KEY (pre_job_group_id) REFERENCES job_group (id)
-    ON DELETE CASCADE
     ON UPDATE CASCADE
 )
   ENGINE = InnoDB

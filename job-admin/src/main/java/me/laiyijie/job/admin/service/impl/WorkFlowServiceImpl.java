@@ -7,13 +7,11 @@ import me.laiyijie.job.admin.service.exception.BusinessException;
 import me.laiyijie.job.admin.service.mq.JobQueueService;
 import me.laiyijie.job.message.RunningStatus;
 import me.laiyijie.job.message.executor.RunJobMsg;
-import me.laiyijie.job.swagger.model.JobGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Created by laiyijie on 11/30/17.
@@ -152,17 +150,22 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
     @Override
     public void resumeWorkFlow(Integer id) {
-        //TODO
-
+        TbWorkFlow workFlow = tbWorkFlowRepository.findOne(id);
+        if (workFlow == null)
+            throw new BusinessException("workflow not exist!");
+        if (RunningStatus.RUNNING.equals(workFlow.getStatus()))
+            throw new BusinessException("workflow is running!");
+        workFlow.setStatus(RunningStatus.RUNNING);
+        tbWorkFlowRepository.save(workFlow);
     }
 
     @Override
     public void runJob(Integer jobId) {
         TbJob job = tbJobRepository.findOne(jobId);
         if (job == null)
-            throw new BusinessException("job not exsist!");
+            return;
         if (RunningStatus.RUNNING.equals(job.getStatus()))
-            throw new BusinessException("job is running!");
+            return;
 
         jobQueueService.sendRunJobToExecutor(
                 getSuitableExecutorFromExecutorGroup(job.getExecutorGroup()).getName(),
@@ -173,7 +176,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
     }
 
     private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
-        List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Id(tbExecutorGroup.getName());
+        List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Name(tbExecutorGroup.getName());
         if (tbExecutors.isEmpty())
             throw new BusinessException("no available machine!");
         return tbExecutors.get(0);

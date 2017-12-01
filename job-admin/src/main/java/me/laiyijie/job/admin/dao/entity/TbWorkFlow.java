@@ -84,4 +84,17 @@ public class TbWorkFlow {
     public void setRunInterval(Integer runInterval) {
         this.runInterval = runInterval;
     }
+
+    @Override
+    public String toString() {
+        return "TbWorkFlow{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", runInterval=" + runInterval +
+                ", status='" + status + '\'' +
+                ", lastRunTime=" + lastRunTime +
+                ", scheduled=" + scheduled +
+                '}';
+    }
 }

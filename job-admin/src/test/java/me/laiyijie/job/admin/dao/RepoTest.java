@@ -61,7 +61,7 @@ public class RepoTest {
         tbJobGroup1.setId(2);
         tbJobGroup1.setName("2nd");
         tbJobGroup1.setWorkFlow(tbWorkFlowRepository.findOne(1));
-        tbJobGroup1.setPreJobGroup(tbJobGroup);
+        tbJobGroup1.setStep(1);
         tbJobGroupRepository.save(tbJobGroup1);
 
         TbJob tbJob = new TbJob();
