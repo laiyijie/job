@@ -7,7 +7,7 @@ CREATE TABLE admin_user (
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
-
+INSERT INTO admin_user VALUES (1, 'admin', 'admin', 'admin');
 CREATE TABLE executor_group (
   name        VARCHAR(256),
   description VARCHAR(450),
@@ -37,19 +37,19 @@ CREATE TABLE work_flow (
   run_interval  INT(11),
   status        VARCHAR(45),
   last_run_time BIGINT(20),
-  scheduled     BOOLEAN,
+  scheduled     BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (id)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE job_group (
-  id               INT(11) AUTO_INCREMENT,
-  name             VARCHAR(45),
-  description      VARCHAR(200),
-  work_flow_id     INT(11),
-  step INT(11),
-  status           VARCHAR(45),
+  id           INT(11) AUTO_INCREMENT,
+  name         VARCHAR(45),
+  description  VARCHAR(200),
+  work_flow_id INT(11),
+  step         INT(11),
+  status       VARCHAR(45),
   PRIMARY KEY (id),
   CONSTRAINT fk_job_group_to_work_flow_id FOREIGN KEY (work_flow_id) REFERENCES work_flow (id)
     ON DELETE CASCADE
@@ -59,14 +59,15 @@ CREATE TABLE job_group (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE job (
-  id                    INT(11) AUTO_INCREMENT,
-  name                  VARCHAR(45),
-  description           VARCHAR(200),
-  job_group_id          INT(10),
-  status                VARCHAR(45),
-  executor_group_name   VARCHAR(256),
-  script                VARCHAR(2048),
-  current_executor_name VARCHAR(256),
+  id                     INT(11) AUTO_INCREMENT,
+  name                   VARCHAR(45),
+  description            VARCHAR(200),
+  job_group_id           INT(10),
+  status                 VARCHAR(45),
+  executor_group_name    VARCHAR(256),
+  script                 VARCHAR(2048),
+  current_executor_name  VARCHAR(256),
+  last_running_beat_time BIGINT(20),
   PRIMARY KEY (id),
   CONSTRAINT fk_job_to_job_group_id FOREIGN KEY (job_group_id) REFERENCES job_group (id)
     ON DELETE CASCADE

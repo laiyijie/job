@@ -12,4 +12,6 @@ import java.util.List;
 public interface TbWorkFlowRepository extends CrudRepository<TbWorkFlow, Integer> {
     List<TbWorkFlow> findAll();
     List<TbWorkFlow> findAllByStatus(String status);
+    List<TbWorkFlow> findAllByScheduledIsTrue();
+
 }

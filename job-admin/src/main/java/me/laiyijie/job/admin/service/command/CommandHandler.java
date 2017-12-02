@@ -37,29 +37,26 @@ public class CommandHandler {
     @RabbitHandler
     public void handle(HeartBeatMsg heartBeatMsg) {
         log.debug("heart beat receive : " + heartBeatMsg);
-        if (heartBeatMsg.getExecutorName() ==null || heartBeatMsg.getGroupName() == null
-                || "".equals(heartBeatMsg.getExecutorName()) || "".equals(heartBeatMsg.getGroupName())){
+        if (heartBeatMsg.getExecutorName() == null || heartBeatMsg.getGroupName() == null
+                || "".equals(heartBeatMsg.getExecutorName()) || "".equals(heartBeatMsg.getGroupName())) {
             return;
         }
         TbExecutorGroup tbExecutorGroup = tbExecutorGroupRepository.findOne(heartBeatMsg.getGroupName());
-        // create the group if not exsit
-        if (tbExecutorGroup==null){
-            tbExecutorGroup = new TbExecutorGroup();
-            tbExecutorGroup.setName(heartBeatMsg.getGroupName());
-            tbExecutorGroup.setDescription("AUTO_CREATE");
-            tbExecutorGroupRepository.save(tbExecutorGroup);
+        if (tbExecutorGroup == null) {
+            log.info("executor group not exist: " + heartBeatMsg);
+            return;
         }
 
         TbExecutor tbExecutor = tbExecutorRepository.findOne(heartBeatMsg.getExecutorName());
 
-        if (tbExecutor == null){
+        if (tbExecutor == null) {
             tbExecutor = new TbExecutor();
             tbExecutor.setName(heartBeatMsg.getExecutorName());
             tbExecutor.setExecutorGroup(tbExecutorGroup);
             tbExecutor.setOnlineStatus(TbExecutor.ONLINE);
             tbExecutor.setLastHeartBeatTime(System.currentTimeMillis());
             tbExecutorRepository.save(tbExecutor);
-        }else {
+        } else {
             tbExecutor.setLastHeartBeatTime(System.currentTimeMillis());
             tbExecutorRepository.save(tbExecutor);
         }
@@ -74,10 +71,11 @@ public class CommandHandler {
         if (tbJob == null)
             return;
         if (RunningStatus.FINISHED.equals(tbJob.getStatus()) ||
-                RunningStatus.FAILED.equals(tbJob.getStatus())){
+                RunningStatus.FAILED.equals(tbJob.getStatus())) {
             return;
         }
         tbJob.setStatus(jobStatusMsg.getStatus());
+        tbJob.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(tbJob);
     }
 

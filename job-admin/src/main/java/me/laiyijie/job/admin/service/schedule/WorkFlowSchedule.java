@@ -1,13 +1,13 @@
 package me.laiyijie.job.admin.service.schedule;
 
-import me.laiyijie.job.admin.dao.TbJobGroupRepository;
-import me.laiyijie.job.admin.dao.TbJobRepository;
-import me.laiyijie.job.admin.dao.TbWorkFlowRepository;
+import com.alibaba.fastjson.JSON;
+import me.laiyijie.job.admin.dao.*;
+import me.laiyijie.job.admin.dao.entity.TbExecutor;
 import me.laiyijie.job.admin.dao.entity.TbJob;
 import me.laiyijie.job.admin.dao.entity.TbJobGroup;
 import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
 import me.laiyijie.job.admin.service.WorkFlowService;
-import me.laiyijie.job.admin.service.mq.JobQueueService;
+import me.laiyijie.job.admin.service.exception.BusinessException;
 import me.laiyijie.job.message.RunningStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,70 +34,122 @@ public class WorkFlowSchedule {
     private TbJobRepository tbJobRepository;
     @Autowired
     private WorkFlowService workFlowService;
+    @Autowired
+    private TbExecutorGroupRepository tbExecutorGroupRepository;
+    @Autowired
+    private TbExecutorRepository tbExecutorRepository;
+
+    private final Integer OFFLINE_TIME = 60;
 
     @Scheduled(fixedDelay = 1000)
     public void scheduleRunningWorkFlows() {
-        log.debug(" in  schedule running work flow!" );
+        log.debug(" in  schedule running work flow!");
         log.debug(" workflow info: " + tbWorkFlowRepository.findAll());
         List<TbWorkFlow> workFlows = tbWorkFlowRepository.findAllByStatus(RunningStatus.RUNNING);
         for (TbWorkFlow workFlow : workFlows) {
-            log.debug("schedule running work: " + workFlow.getId() );
-            TbJobGroup tbJobGroup = getCurrentWorkGroup(workFlow.getId());
-            if (tbJobGroup == null) {
-                workFlow.setStatus(RunningStatus.FINISHED);
-                tbWorkFlowRepository.save(workFlow);
-                continue;
-            }
-            List<TbJob> tbJobs = tbJobRepository.findAllByJobGroup_Id(tbJobGroup.getId());
+            try {
 
-            if (RunningStatus.INIT.equals(tbJobGroup.getStatus())) {
-                tbJobs.forEach((job) -> {
-                    workFlowService.runJob(job.getId());
-                });
-                tbJobGroup.setStatus(RunningStatus.RUNNING);
-                tbJobGroupRepository.save(tbJobGroup);
-                continue;
-            }
+                log.debug("schedule running work: " + workFlow.getId());
+                TbJobGroup tbJobGroup = getCurrentWorkGroup(workFlow.getId());
+                if (tbJobGroup == null) {
+                    workFlow.setStatus(RunningStatus.FINISHED);
+                    tbWorkFlowRepository.save(workFlow);
+                    continue;
+                }
+                List<TbJob> tbJobs = tbJobRepository.findAllByJobGroup_Id(tbJobGroup.getId());
 
-            if (RunningStatus.STOPPED.equals(tbJobGroup.getStatus()) ||
-                    RunningStatus.FAILED.equals(tbJobGroup.getStatus())){
-                tbJobs.forEach((job)->{
-                    if (!RunningStatus.FINISHED.equals(job.getStatus())){
+                if (RunningStatus.INIT.equals(tbJobGroup.getStatus())) {
+                    tbJobs.forEach((job) -> {
                         workFlowService.runJob(job.getId());
-                    }
-                });
-                tbJobGroup.setStatus(RunningStatus.RUNNING);
-                tbJobGroupRepository.save(tbJobGroup);
-                continue;
-            }
+                    });
+                    tbJobGroup.setStatus(RunningStatus.RUNNING);
+                    tbJobGroupRepository.save(tbJobGroup);
+                    continue;
+                }
 
-            Boolean isHaveFailed = false;
-            Boolean isAllFinish = true;
-            for (TbJob job : tbJobs) {
-                if (RunningStatus.FAILED.equals(job.getStatus())) {
-                    isHaveFailed = true;
+                if (RunningStatus.STOPPED.equals(tbJobGroup.getStatus()) ||
+                        RunningStatus.FAILED.equals(tbJobGroup.getStatus())) {
+                    tbJobs.forEach((job) -> {
+                        if (!RunningStatus.FINISHED.equals(job.getStatus())) {
+                            workFlowService.runJob(job.getId());
+                        }
+                    });
+                    tbJobGroup.setStatus(RunningStatus.RUNNING);
+                    tbJobGroupRepository.save(tbJobGroup);
                     continue;
                 }
-                if (RunningStatus.FINISHED.equals(job.getStatus()))
-                    continue;
-                isAllFinish = false;
-            }
-            if (isAllFinish) {
-                if (isHaveFailed) {
-                    tbJobGroup.setStatus(RunningStatus.FAILED);
-                    workFlow.setStatus(RunningStatus.FAILED);
-                } else {
-                    tbJobGroup.setStatus(RunningStatus.FINISHED);
+
+                Boolean isHaveFailed = false;
+                Boolean isAllFinish = true;
+                for (TbJob job : tbJobs) {
+                    if (RunningStatus.FAILED.equals(job.getStatus())) {
+                        isHaveFailed = true;
+                        continue;
+                    }
+                    if (RunningStatus.FINISHED.equals(job.getStatus()))
+                        continue;
+                    isAllFinish = false;
                 }
-                tbJobGroupRepository.save(tbJobGroup);
+                if (isAllFinish) {
+                    if (isHaveFailed) {
+                        tbJobGroup.setStatus(RunningStatus.FAILED);
+                        workFlow.setStatus(RunningStatus.FAILED);
+                    } else {
+                        tbJobGroup.setStatus(RunningStatus.FINISHED);
+                    }
+                    tbJobGroupRepository.save(tbJobGroup);
+                    tbWorkFlowRepository.save(workFlow);
+                }
+            } catch (BusinessException ex) {
+                workFlow.setStatus(RunningStatus.FAILED);
                 tbWorkFlowRepository.save(workFlow);
+                log.error(" errorMsg:" + ex.getMsg());
             }
         }
+
     }
 
     @Scheduled(fixedDelay = 1000)
     public void scheduleCircleWorkFlows() {
+        List<TbWorkFlow> workFlows = tbWorkFlowRepository.findAllByScheduledIsTrue();
+        log.debug("schedule circle" + JSON.toJSONString(workFlows));
+        for (TbWorkFlow workFlow : workFlows) {
+            if (workFlow.getRunInterval() <= 0) {
+                continue;
+            }
+            if (workFlow.getLastRunTime() + workFlow.getRunInterval() * 1000 > System.currentTimeMillis()) {
+                continue;
+            }
+            if (RunningStatus.RUNNING.equals(workFlow.getStatus())) {
+                continue;
+            }
+            try {
+                workFlowService.runWorkFlow(workFlow.getId());
+            } catch (BusinessException ex) {
+                log.error("workflow_id: " + workFlow.getId() + " errorMsg:" + ex.getMsg());
+            }
+        }
+    }
 
+    @Scheduled(fixedDelay = 5000)
+    public void checkOfflineExecutor() {
+        List<TbExecutor> executors = tbExecutorRepository.findAllByLastHeartBeatTimeLessThan(System.currentTimeMillis() - OFFLINE_TIME * 1000);
+        log.debug("executors:" + JSON.toJSONString(executors));
+        for (TbExecutor executor : executors) {
+            executor.setOnlineStatus(TbExecutor.OFFLINE);
+            tbExecutorRepository.save(executor);
+        }
+
+    }
+
+    @Scheduled(fixedDelay = 5000)
+    public void checkOfflineJob() {
+        List<TbJob> jobs = tbJobRepository.findAllByStatusAndLastRunningBeatTimeLessThan(RunningStatus.RUNNING, System.currentTimeMillis() - OFFLINE_TIME * 1000);
+        log.debug("check off line job: " + JSON.toJSONString(jobs));
+        for (TbJob job : jobs) {
+            job.setStatus(RunningStatus.FAILED);
+            tbJobRepository.save(job);
+        }
     }
 
     private TbJobGroup getCurrentWorkGroup(Integer workFlowId) {

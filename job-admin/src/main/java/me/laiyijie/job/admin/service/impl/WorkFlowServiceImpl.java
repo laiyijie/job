@@ -7,6 +7,8 @@ import me.laiyijie.job.admin.service.exception.BusinessException;
 import me.laiyijie.job.admin.service.mq.JobQueueService;
 import me.laiyijie.job.message.RunningStatus;
 import me.laiyijie.job.message.executor.RunJobMsg;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,8 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
     @Autowired
     private JobQueueService jobQueueService;
+
+    private Logger log = LoggerFactory.getLogger(WorkFlowServiceImpl.class);
 
     @Override
     public TbWorkFlow createWorkFlow(TbWorkFlow tbWorkFlow) {
@@ -63,7 +67,12 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         if (RunningStatus.RUNNING.equals(workFlow.getStatus())) {
             throw new BusinessException("this job is running , cannot modify!");
         }
-        return tbWorkFlowRepository.save(tbWorkFlow);
+
+        workFlow.setDescription(tbWorkFlow.getDescription());
+        workFlow.setRunInterval(tbWorkFlow.getRunInterval());
+        workFlow.setName(tbWorkFlow.getName());
+
+        return tbWorkFlowRepository.save(workFlow);
     }
 
     @Override
@@ -74,7 +83,12 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         }
         if (RunningStatus.RUNNING.equals(group.getStatus()))
             throw new BusinessException("job is running, cannot modify");
-        return tbJobGroupRepository.save(tbJobGroup);
+
+        group.setName(tbJobGroup.getName());
+        group.setStep(tbJobGroup.getStep());
+        group.setDescription(tbJobGroup.getDescription());
+
+        return tbJobGroupRepository.save(group);
     }
 
     @Override
@@ -86,6 +100,12 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         if (RunningStatus.RUNNING.equals(tbJob.getStatus())) {
             throw new BusinessException("job is running , cannot modify ");
         }
+
+        tbJob.setDescription(job.getDescription());
+        tbJob.setName(job.getName());
+        tbJob.setExecutorGroup(job.getExecutorGroup());
+        tbJob.setScript(job.getScript());
+
         return tbJobRepository.save(job);
     }
 
@@ -139,6 +159,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
             job.setStatus(RunningStatus.INIT);
             tbJobRepository.save(job);
         });
+        workFlow.setLastRunTime(System.currentTimeMillis());
         tbWorkFlowRepository.save(workFlow);
     }
 
@@ -166,19 +187,27 @@ public class WorkFlowServiceImpl implements WorkFlowService {
             return;
         if (RunningStatus.RUNNING.equals(job.getStatus()))
             return;
+        TbExecutor tbExecutor = getSuitableExecutorFromExecutorGroup(
+                job.getExecutorGroup());
+        if (tbExecutor == null) {
+            job.setStatus(RunningStatus.FAILED);
+            log.error("job_id: " + jobId + "  executor_group_name:" + job.getExecutorGroup().getName() + " error msg: no executors online ");
+            tbJobRepository.save(job);
+            return;
+        }
 
-        jobQueueService.sendRunJobToExecutor(
-                getSuitableExecutorFromExecutorGroup(job.getExecutorGroup()).getName(),
+        jobQueueService.sendRunJobToExecutor(tbExecutor.getName(),
                 new RunJobMsg(job.getId(), job.getScript()));
 
         job.setStatus(RunningStatus.RUNNING);
+        job.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(job);
     }
 
     private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
         List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Name(tbExecutorGroup.getName());
         if (tbExecutors.isEmpty())
-            throw new BusinessException("no available machine!");
+            return null;
         return tbExecutors.get(0);
     }
 }

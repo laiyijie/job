@@ -16,15 +16,36 @@ public class TbJob {
     private String status;
     private String script;
 
+    private Long lastRunningBeatTime;
+
     @ManyToOne
     @JoinColumn(name = "job_group_id")
     private TbJobGroup jobGroup;
     @ManyToOne
     @JoinColumn(name = "executor_group_name")
     private TbExecutorGroup executorGroup;
+    @ManyToOne
+    @JoinColumn(name = "current_executor_name")
+    private TbExecutor currentExecutor;
+
+    public TbExecutor getCurrentExecutor() {
+        return currentExecutor;
+    }
+
+    public void setCurrentExecutor(TbExecutor currentExecutor) {
+        this.currentExecutor = currentExecutor;
+    }
 
     public TbExecutorGroup getExecutorGroup() {
         return executorGroup;
+    }
+
+    public Long getLastRunningBeatTime() {
+        return lastRunningBeatTime;
+    }
+
+    public void setLastRunningBeatTime(Long lastRunningBeatTime) {
+        this.lastRunningBeatTime = lastRunningBeatTime;
     }
 
     public void setExecutorGroup(TbExecutorGroup executorGroup) {

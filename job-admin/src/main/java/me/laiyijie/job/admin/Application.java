@@ -44,8 +44,10 @@ public class Application {
             TbWorkFlow tbWorkFlow = new TbWorkFlow();
             tbWorkFlow.setId(1);
             tbWorkFlow.setName("first work flow");
-            tbWorkFlow.setRunInterval(0);
+            tbWorkFlow.setRunInterval(100);
             tbWorkFlow.setStatus(RunningStatus.INIT);
+            tbWorkFlow.setScheduled(true);
+            tbWorkFlow.setLastRunTime(0L);
             tbWorkFlowRepository.save(tbWorkFlow);
 
             TbJobGroup tbJobGroup = new TbJobGroup();
