@@ -45,7 +45,7 @@ public class ExecutorController implements ExecutorApi {
 
     @Override
     public ResponseEntity<Void> executorGroupsGroupNamePut(@ApiParam(value = "", required = true) @PathVariable("groupName") String groupName, @ApiParam(value = "", required = true) @Valid @RequestBody ExecutorGroup name, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+        return null;
     }
 
     @Override
