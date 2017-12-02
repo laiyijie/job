@@ -48,4 +48,10 @@ public class ExecutorConverter {
         executorGroup.setDescription(tbExecutorGroup.getDescription());
         return executorGroup;
     }
+    public TbExecutorGroup convertToUpdateExecutorGroup(ExecutorGroup executorGroup) {
+        TbExecutorGroup tbExecutorGroup = new TbExecutorGroup();
+        tbExecutorGroup.setDescription(executorGroup.getDescription());
+        tbExecutorGroup.setName(executorGroup.getName());
+        return tbExecutorGroup;
+    }
 }

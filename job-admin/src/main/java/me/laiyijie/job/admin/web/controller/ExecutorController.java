@@ -1,8 +1,10 @@
 package me.laiyijie.job.admin.web.controller;
 
 import io.swagger.annotations.ApiParam;
+import me.laiyijie.job.admin.dao.entity.TbExecutorGroup;
 import me.laiyijie.job.admin.service.ExecutorService;
 import me.laiyijie.job.admin.show.ExecutorShow;
+import me.laiyijie.job.admin.show.converter.ExecutorConverter;
 import me.laiyijie.job.swagger.api.ExecutorApi;
 import me.laiyijie.job.swagger.model.ExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ public class ExecutorController implements ExecutorApi {
     private ExecutorShow executorShow;
     @Autowired
     private ExecutorService executorService;
+    @Autowired
+    private ExecutorConverter executorConverter;
 
     @Override
     public ResponseEntity<List<ExecutorGroup>> executorGroupsGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -44,12 +48,18 @@ public class ExecutorController implements ExecutorApi {
     }
 
     @Override
-    public ResponseEntity<Void> executorGroupsGroupNamePut(@ApiParam(value = "", required = true) @PathVariable("groupName") String groupName, @ApiParam(value = "", required = true) @Valid @RequestBody ExecutorGroup name, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+    public ResponseEntity<Void> executorGroupsGroupNamePut(@ApiParam(value = "", required = true) @PathVariable("groupName") String groupName, @ApiParam(value = "", required = true) @Valid @RequestBody ExecutorGroup executorGroup, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        executorGroup.setName(groupName);
+        executorService.modifyExecutorGroup(executorConverter.convertToUpdateExecutorGroup(executorGroup));
+        return ResponseEntity.ok().build();
     }
+
 
     @Override
     public ResponseEntity<String> executorGroupsPost(@ApiParam(value = "", required = true) @Valid @RequestBody ExecutorGroup executorGroup, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        executorService.createExecutorGroup(executorConverter.convertToUpdateExecutorGroup(executorGroup));
+        return ResponseEntity.ok().build();
     }
+
+
 }

@@ -1,12 +1,23 @@
 package me.laiyijie.job.admin.web.controller;
 
 import io.swagger.annotations.ApiParam;
+import me.laiyijie.job.admin.dao.TbExecutorGroupRepository;
+import me.laiyijie.job.admin.dao.TbJobGroupRepository;
+import me.laiyijie.job.admin.dao.TbWorkFlowRepository;
+import me.laiyijie.job.admin.dao.entity.TbExecutorGroup;
+import me.laiyijie.job.admin.dao.entity.TbJob;
+import me.laiyijie.job.admin.dao.entity.TbJobGroup;
+import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
+import me.laiyijie.job.admin.service.WorkFlowService;
+import me.laiyijie.job.admin.show.WorkFlowShow;
+import me.laiyijie.job.admin.show.converter.WorkFlowConverter;
 import me.laiyijie.job.swagger.api.JobApi;
 import me.laiyijie.job.swagger.api.JobsApi;
 import me.laiyijie.job.swagger.api.WorkflowsApi;
 import me.laiyijie.job.swagger.model.Job;
 import me.laiyijie.job.swagger.model.JobGroup;
 import me.laiyijie.job.swagger.model.WorkFlow;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,89 +32,132 @@ import java.util.List;
  * Created by laiyijie on 12/2/17.
  */
 @RestController
-public class JobController implements JobApi,JobsApi,WorkflowsApi {
+public class JobController implements JobApi, JobsApi, WorkflowsApi {
+
+    @Autowired
+    private WorkFlowService workFlowService;
+    @Autowired
+    private WorkFlowShow workFlowShow;
+    @Autowired
+    private WorkFlowConverter workFlowConverter;
+
     @Override
     public ResponseEntity<Void> jobGroupsGroupIdDelete(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        workFlowService.deleteJobGroup(groupId);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<JobGroup> jobGroupsGroupIdGet(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        JobGroup jobGroup = workFlowShow.getJobGroup(groupId);
+        if (jobGroup == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(jobGroup);
     }
 
     @Override
     public ResponseEntity<Job> jobGroupsGroupIdJobsGet(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        Job job = workFlowShow.getJob(groupId);
+        if (job == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(job);
     }
 
     @Override
     public ResponseEntity<Void> jobGroupsGroupIdPost(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, @ApiParam(value = "", required = true) @Valid @RequestBody JobGroup jobGroup, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        TbJobGroup tbJobGroup = workFlowConverter.convertToTbJobGroup(jobGroup);
+        tbJobGroup.setId(groupId);
+        workFlowService.modifyJobGroup(tbJobGroup);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Void> jobsJobIdDelete(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        workFlowService.deleteJob(jobId);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Job> jobsJobIdGet(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        Job job = workFlowShow.getJob(jobId);
+        if (job == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(job);
+
     }
 
     @Override
-    public ResponseEntity<Void> jobsJobIdPost(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+    public ResponseEntity<Void> jobsJobIdPost(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, @ApiParam(value = "", required = true) @Valid @RequestBody Job job, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        TbJob tbJob = workFlowConverter.convertToTbJob(job);
+        tbJob.setId(jobId);
+        workFlowService.modifyJob(tbJob);
+        return ResponseEntity.ok().build();
     }
+
 
     @Override
     public ResponseEntity<Void> jobsJobIdRunPost(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        workFlowService.runJob(jobId);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Void> jobsPost(@ApiParam(value = "", required = true) @Valid @RequestBody Job job, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        TbJob tbJob = workFlowConverter.convertToTbJob(job);
+        workFlowService.createJob(tbJob);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<List<WorkFlow>> workflowsGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        return ResponseEntity.ok(workFlowShow.getWorkFlows());
     }
 
     @Override
     public ResponseEntity<Integer> workflowsPost(@ApiParam(value = "", required = true) @Valid @RequestBody WorkFlow workFlow, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        TbWorkFlow tbWorkFlow = workFlowConverter.convertToTbWorkFlow(workFlow);
+        tbWorkFlow = workFlowService.createWorkFlow(tbWorkFlow);
+        return ResponseEntity.ok(tbWorkFlow.getId());
     }
 
     @Override
     public ResponseEntity<Void> workflowsWorkFlowIdDelete(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        workFlowService.deleteWorkFlow(workFlowId);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<WorkFlow> workflowsWorkFlowIdGet(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        WorkFlow workFlow = workFlowShow.getWorkFlow(workFlowId);
+        if (workFlow == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(workFlow);
     }
 
     @Override
     public ResponseEntity<List<JobGroup>> workflowsWorkFlowIdJobGroupsGet(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        return ResponseEntity.ok(workFlowShow.getJobGroupsInWorkFlow(workFlowId));
     }
 
     @Override
     public ResponseEntity<Void> workflowsWorkFlowIdPost(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, @ApiParam(value = "", required = true) @Valid @RequestBody WorkFlow workFlow, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        TbWorkFlow tbWorkFlow = workFlowConverter.convertToTbWorkFlow(workFlow);
+        tbWorkFlow.setId(workFlowId);
+        workFlowService.modifyWorkFlow(tbWorkFlow);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Void> workflowsWorkFlowIdResumePost(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        workFlowService.resumeWorkFlow(workFlowId);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<Void> workflowsWorkFlowIdRunPost(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return null;
+        workFlowService.runWorkFlow(workFlowId);
+        return ResponseEntity.ok().build();
     }
+
+
 }

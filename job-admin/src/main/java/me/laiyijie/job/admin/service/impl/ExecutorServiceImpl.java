@@ -32,6 +32,8 @@ public class ExecutorServiceImpl implements ExecutorService {
 
     @Override
     public void createExecutorGroup(TbExecutorGroup group) {
+        if (group == null)
+            throw new BusinessException("group is null");
         TbExecutorGroup executorGroup = tbExecutorGroupRepository.findOne(group.getName());
         if (executorGroup != null)
             throw new BusinessException("already exist");
