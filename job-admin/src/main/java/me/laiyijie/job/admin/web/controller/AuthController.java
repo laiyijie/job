@@ -3,6 +3,7 @@ package me.laiyijie.job.admin.web.controller;
 import io.swagger.annotations.ApiParam;
 import me.laiyijie.job.admin.dao.TbAdminRepository;
 import me.laiyijie.job.admin.dao.entity.TbAdmin;
+import me.laiyijie.job.admin.web.handler.AuthInterceptor;
 import me.laiyijie.job.swagger.api.AuthApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class AuthController implements AuthApi {
         TbAdmin tbAdmin = tbAdminRepository.findByUsername(username);
         if (tbAdmin == null || !tbAdmin.getUsername().equals(password))
             return ResponseEntity.status(401).build();
+        request.getSession().setAttribute(AuthInterceptor.SESSION_KEY, username);
         return ResponseEntity.ok().build();
     }
 }

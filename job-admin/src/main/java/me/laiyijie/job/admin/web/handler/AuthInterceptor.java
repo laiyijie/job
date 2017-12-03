@@ -14,11 +14,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AuthInterceptor implements HandlerInterceptor {
     private Logger log = LoggerFactory.getLogger(AuthInterceptor.class);
+    public static String SESSION_KEY = "ADMIN_USER";
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         log.debug("in pre handle , request path :  " + httpServletRequest.getRequestURI());
-        String username = (String) httpServletRequest.getSession().getAttribute("ADMIN_USER");
+        String username = (String) httpServletRequest.getSession().getAttribute(SESSION_KEY);
         if (username != null)
             return true;
         else {
