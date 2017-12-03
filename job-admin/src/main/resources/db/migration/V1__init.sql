@@ -9,7 +9,7 @@ CREATE TABLE admin_user (
   DEFAULT CHARSET = utf8;
 INSERT INTO admin_user VALUES (1, 'admin', 'admin', 'admin');
 CREATE TABLE executor_group (
-  name        VARCHAR(256),
+  name        VARCHAR(255),
   description VARCHAR(450),
   PRIMARY KEY (name)
 )
@@ -17,7 +17,7 @@ CREATE TABLE executor_group (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE executor (
-  name                 VARCHAR(256),
+  name                 VARCHAR(255),
   executor_group_name  VARCHAR(45),
   ip_address           VARCHAR(200),
   online_status        VARCHAR(45),
@@ -64,9 +64,9 @@ CREATE TABLE job (
   description            VARCHAR(200),
   job_group_id           INT(10),
   status                 VARCHAR(45),
-  executor_group_name    VARCHAR(256),
+  executor_group_name    VARCHAR(255),
   script                 VARCHAR(2048),
-  current_executor_name  VARCHAR(256),
+  current_executor_name  VARCHAR(255),
   last_running_beat_time BIGINT(20),
   PRIMARY KEY (id),
   CONSTRAINT fk_job_to_job_group_id FOREIGN KEY (job_group_id) REFERENCES job_group (id)
