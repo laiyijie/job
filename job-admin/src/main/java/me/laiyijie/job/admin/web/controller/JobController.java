@@ -72,6 +72,12 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     }
 
     @Override
+    public ResponseEntity<Void> jobGroupsPost(@ApiParam(value = "", required = true) @Valid @RequestBody JobGroup jobGroup, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        workFlowService.createJobGroup(workFlowConverter.convertToTbJobGroup(jobGroup));
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
     public ResponseEntity<Void> jobsJobIdDelete(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         workFlowService.deleteJob(jobId);
         return ResponseEntity.ok().build();
