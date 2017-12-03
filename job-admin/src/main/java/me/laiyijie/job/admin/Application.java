@@ -37,7 +37,7 @@ public class Application {
         SpringApplication.run(Application.class);
     }
 
-    @Bean
+//    @Bean
     public CommandLineRunner demo(TbWorkFlowRepository workFlowRepository, TbJobGroupRepository jobGroupRepository, TbJobRepository jobRepository) {
         return (args) -> {
 
