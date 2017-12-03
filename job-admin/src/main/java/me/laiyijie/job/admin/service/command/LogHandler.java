@@ -20,6 +20,6 @@ public class LogHandler {
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
         //TODO need finish
-        log.debug("receive log:" + runningLogMsg);
+        log.info(runningLogMsg.toString());
     }
 }
