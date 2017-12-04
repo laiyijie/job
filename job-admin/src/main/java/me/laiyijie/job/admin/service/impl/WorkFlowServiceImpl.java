@@ -51,6 +51,8 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         //TODO need to add the constraint
         tbJobGroup.setId(null);
         tbJobGroup.setStatus(RunningStatus.INIT);
+        tbJobGroup.setWorkFlow(tbJobGroup.getWorkFlow());
+
         return tbJobGroupRepository.save(tbJobGroup);
     }
 
@@ -59,6 +61,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         //TODO need to add the constraint
         job.setId(null);
         job.setStatus(RunningStatus.INIT);
+
         return tbJobRepository.save(job);
     }
 

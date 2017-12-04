@@ -46,6 +46,7 @@ public class WorkFlowConverter {
         jobGroup.setName(tbJobGroup.getName());
         jobGroup.setDescription(tbJobGroup.getDescription());
         jobGroup.setStep(tbJobGroup.getStep());
+        jobGroup.setWorkFlowId(tbJobGroup.getWorkFlow().getId());
         return jobGroup;
     }
 
@@ -57,6 +58,7 @@ public class WorkFlowConverter {
         job.setName(tbJob.getName());
         job.setId(tbJob.getId());
         job.setScript(tbJob.getScript());
+        job.setJobGroupId(tbJob.getJobGroup().getId());
         job.setExecutorGroup(executorConverter.convertToExecutorGroupWithoutExecutors(tbJob.getExecutorGroup()));
         job.setCurrentExecutor(executorConverter.convertToExecutor(tbJob.getCurrentExecutor()));
         return job;

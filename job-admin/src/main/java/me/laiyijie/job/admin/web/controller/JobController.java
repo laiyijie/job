@@ -56,11 +56,8 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     }
 
     @Override
-    public ResponseEntity<Job> jobGroupsGroupIdJobsGet(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Job job = workFlowShow.getJob(groupId);
-        if (job == null)
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(job);
+    public ResponseEntity<List<Job>> jobGroupsGroupIdJobsGet(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return ResponseEntity.ok(workFlowShow.getJobsInGroup(groupId));
     }
 
     @Override
