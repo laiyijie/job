@@ -56,10 +56,10 @@ public class ExecutorController implements ExecutorApi {
 
 
     @Override
-    public ResponseEntity<String> executorGroupsPost(@ApiParam(value = "", required = true) @Valid @RequestBody ExecutorGroup executorGroup, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<Void> executorGroupsPost(@ApiParam(value = "", required = true) @Valid @RequestBody ExecutorGroup executorGroup, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         TbExecutorGroup group = executorService.createExecutorGroup(executorConverter.convertToUpdateExecutorGroup(executorGroup));
-        return ResponseEntity.ok(group.getName());
+        return ResponseEntity.ok().build();
     }
 
 
