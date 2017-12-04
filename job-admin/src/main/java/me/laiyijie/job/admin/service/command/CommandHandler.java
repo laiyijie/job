@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,6 +34,8 @@ public class CommandHandler {
 
     @Autowired
     private TbJobRepository tbJobRepository;
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @RabbitHandler
     public void handle(HeartBeatMsg heartBeatMsg) {
@@ -65,8 +68,7 @@ public class CommandHandler {
 
     @RabbitHandler
     public void handle(JobStatusMsg jobStatusMsg) {
-        //TODO need to finish
-        log.debug("job status msg recevive: " + jobStatusMsg);
+        log.info("job status msg recevive: " + jobStatusMsg);
         TbJob tbJob = tbJobRepository.findOne(jobStatusMsg.getJobId());
         if (tbJob == null)
             return;
@@ -77,6 +79,7 @@ public class CommandHandler {
         tbJob.setStatus(jobStatusMsg.getStatus());
         tbJob.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(tbJob);
+        simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
     }
 
 

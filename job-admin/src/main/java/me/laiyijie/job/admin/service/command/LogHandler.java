@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,10 +17,13 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = "#{jobQueueNameService.getLogQueueName()}")
 public class LogHandler {
     private Logger log = LoggerFactory.getLogger(LogHandler.class);
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
         //TODO need finish
         log.info(runningLogMsg.toString());
+        simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
     }
 }
