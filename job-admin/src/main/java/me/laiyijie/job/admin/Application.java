@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.concurrent.Executors;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "me.laiyijie.job")
 public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
@@ -37,7 +37,7 @@ public class Application {
         SpringApplication.run(Application.class);
     }
 
-//    @Bean
+    //    @Bean
     public CommandLineRunner demo(TbWorkFlowRepository workFlowRepository, TbJobGroupRepository jobGroupRepository, TbJobRepository jobRepository) {
         return (args) -> {
 
@@ -67,7 +67,7 @@ public class Application {
             tbJob.setExecutorGroup(tbExecutorGroup);
             tbJob.setScript("ls");
             tbJobRepository.save(tbJob);
-            Executors.newSingleThreadExecutor().execute(()->{
+            Executors.newSingleThreadExecutor().execute(() -> {
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException e) {
