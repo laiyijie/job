@@ -10,5 +10,5 @@ public interface ExecutorService {
 
     void modifyExecutorGroup(TbExecutorGroup group);
 
-    void createExecutorGroup(TbExecutorGroup group);
+    TbExecutorGroup createExecutorGroup(TbExecutorGroup group);
 }
