@@ -205,7 +205,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         }
 
         jobQueueService.sendRunJobToExecutor(tbExecutor.getName(),
-                new RunJobMsg(job.getId(), job.getScript()));
+                new RunJobMsg(job.getJobGroup().getWorkFlow().getId(), job.getJobGroup().getId(), job.getId(), job.getScript()));
 
         job.setStatus(RunningStatus.RUNNING);
         job.setLastRunningBeatTime(System.currentTimeMillis());

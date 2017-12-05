@@ -56,7 +56,7 @@ public class ShellCommandRunner implements Runnable {
                             InputStreamReader(proc.getInputStream()));
                     String s;
                     while ((s = stdInput.readLine()) != null) {
-                        jobQueueService.sendLog(new RunningLogMsg(runJob.getJobId(), s, false));
+                        jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), s, false));
                         log.info(s);
                     }
                 } catch (IOException ex) {
@@ -70,7 +70,7 @@ public class ShellCommandRunner implements Runnable {
                             InputStreamReader(proc.getErrorStream()));
                     String s;
                     while ((s = stdError.readLine()) != null) {
-                        jobQueueService.sendLog(new RunningLogMsg(runJob.getJobId(), s, true));
+                        jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), s, true));
                         log.info(s);
                     }
                 } catch (IOException ex) {
@@ -82,22 +82,22 @@ public class ShellCommandRunner implements Runnable {
             while (proc.isAlive()) {
                 if (stop) {
                     proc.destroy();
-                    jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getJobId(), JobStatusMsg.STOPPED));
+                    jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), JobStatusMsg.STOPPED));
                     runningJobMap.remove(runJob.getJobId());
                     log.info(" JOB_STOPPED: " + runJob.getJobId());
                     return;
                 }
                 log.info("proc is alive, job_id : " + runJob.getJobId());
-                jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getJobId(), JobStatusMsg.RUNNING));
+                jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), JobStatusMsg.RUNNING));
                 Thread.sleep(1000);
             }
             if (proc.exitValue() == 0) {
-                jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getJobId(), JobStatusMsg.FINISHED));
+                jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), JobStatusMsg.FINISHED));
                 runningJobMap.remove(runJob.getJobId());
                 log.info(" JOB_FINISHED: " + runJob.getJobId());
             } else {
                 log.info(" JOB_FINISHED with exitcode not 0, job_id: " + runJob.getJobId() + " exit code : " + proc.exitValue());
-                jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getJobId(), JobStatusMsg.FAILED));
+                jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), JobStatusMsg.FAILED));
                 runningJobMap.remove(runJob.getJobId());
             }
 
@@ -105,7 +105,7 @@ public class ShellCommandRunner implements Runnable {
         } catch (IOException | InterruptedException ex) {
             log.error("error in job_id : " + runJob.getJobId() + " job_command:  " + runJob.getJobCommand());
             log.error(getTrace(ex));
-            jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getJobId(), JobStatusMsg.FAILED));
+            jobQueueService.sendJobStatus(new JobStatusMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(), runJob.getJobId(), JobStatusMsg.FAILED));
             runningJobMap.remove(runJob.getJobId());
         }
     }

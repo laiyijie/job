@@ -7,16 +7,36 @@ import java.io.Serializable;
  */
 public class RunningLogMsg implements Serializable {
     private Integer jobId;
+    private Integer workFlowId;
+    private Integer jobGroupId;
     private Boolean error;
     private String content;
 
     public RunningLogMsg() {
     }
 
-    public RunningLogMsg(Integer jobId, String log, Boolean isError) {
+    public RunningLogMsg(Integer workFlowId, Integer jobGroupId, Integer jobId, String log, Boolean isError) {
         this.content = log;
         this.error = isError;
         this.jobId = jobId;
+        this.workFlowId = workFlowId;
+        this.jobGroupId = jobGroupId;
+    }
+
+    public Integer getWorkFlowId() {
+        return workFlowId;
+    }
+
+    public void setWorkFlowId(Integer workFlowId) {
+        this.workFlowId = workFlowId;
+    }
+
+    public Integer getJobGroupId() {
+        return jobGroupId;
+    }
+
+    public void setJobGroupId(Integer jobGroupId) {
+        this.jobGroupId = jobGroupId;
     }
 
     public Integer getJobId() {
