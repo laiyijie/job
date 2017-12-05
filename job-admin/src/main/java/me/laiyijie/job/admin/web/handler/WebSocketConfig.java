@@ -19,9 +19,11 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 //        config.setApplicationDestinationPrefixes("/app");
     }
 
+
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/job-websocket").withSockJS();
+        registry.addEndpoint("/job-websocket").setAllowedOrigins("*").withSockJS();
     }
 
 }
