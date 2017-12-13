@@ -26,13 +26,11 @@ public class Application {
         SpringApplication.run(Application.class);
     }
 
-//    @Bean
-//    public CommandLineRunner runner() {
-//        return (args) -> {
-//            log.info(EXECUTOR_NAME);
-//            jobRunnerService.runShell(new RunJobMsg(1, "#!/bin/sh\nls\nsleep 10\nls\n"));
-//            Thread.sleep(2000);
-//            jobRunnerService.stopShell(new StopJobMsg(1));
-//        };
-//    }
+    @Bean
+    public CommandLineRunner runner() {
+        return (args) -> {
+            jobRunnerService.runShell(new RunJobMsg(1, 1, 1, "mvn -v"));
+//            log.error(System.getenv("Path"));
+        };
+    }
 }
