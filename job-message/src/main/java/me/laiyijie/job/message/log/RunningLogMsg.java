@@ -11,16 +11,28 @@ public class RunningLogMsg implements Serializable {
     private Integer jobGroupId;
     private Boolean error;
     private String content;
+    private Long time;
+    private String executorName;
 
     public RunningLogMsg() {
     }
 
-    public RunningLogMsg(Integer workFlowId, Integer jobGroupId, Integer jobId, String log, Boolean isError) {
+    public RunningLogMsg(Integer workFlowId, Integer jobGroupId, Integer jobId, String log, Boolean isError, Long time, String executorName) {
         this.content = log;
         this.error = isError;
         this.jobId = jobId;
         this.workFlowId = workFlowId;
         this.jobGroupId = jobGroupId;
+        this.time = time;
+        this.executorName = executorName;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 
     public Integer getWorkFlowId() {
@@ -63,12 +75,24 @@ public class RunningLogMsg implements Serializable {
         this.content = content;
     }
 
+    public String getExecutorName() {
+        return executorName;
+    }
+
+    public void setExecutorName(String executorName) {
+        this.executorName = executorName;
+    }
+
     @Override
     public String toString() {
         return "RunningLogMsg{" +
                 "jobId=" + jobId +
+                ", workFlowId=" + workFlowId +
+                ", jobGroupId=" + jobGroupId +
                 ", error=" + error +
                 ", content='" + content + '\'' +
+                ", time=" + time +
+                ", executorName='" + executorName + '\'' +
                 '}';
     }
 }

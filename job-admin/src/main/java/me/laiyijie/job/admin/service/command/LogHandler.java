@@ -1,5 +1,7 @@
 package me.laiyijie.job.admin.service.command;
 
+import me.laiyijie.job.admin.dao.TbJobErrorLogRepository;
+import me.laiyijie.job.admin.dao.entity.TbJobErrorLog;
 import me.laiyijie.job.admin.service.mq.JobQueueNameService;
 import me.laiyijie.job.message.log.RunningLogMsg;
 import org.slf4j.Logger;
@@ -19,11 +21,25 @@ public class LogHandler {
     private Logger log = LoggerFactory.getLogger(LogHandler.class);
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private TbJobErrorLogRepository tbJobErrorLogRepository;
 
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
-        //TODO need finish
-        log.info(runningLogMsg.toString());
         simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
+        if (runningLogMsg.getError()) {
+            TbJobErrorLog tbJobErrorLog = new TbJobErrorLog();
+            tbJobErrorLog.setExecutorName(runningLogMsg.getExecutorName());
+
+            tbJobErrorLog.setWorkflowId(runningLogMsg.getWorkFlowId());
+            tbJobErrorLog.setJobGroupId(runningLogMsg.getJobGroupId());
+            tbJobErrorLog.setJobId(runningLogMsg.getJobId());
+
+            tbJobErrorLog.setContent(runningLogMsg.getContent());
+            tbJobErrorLog.setLogTime(runningLogMsg.getTime());
+            tbJobErrorLogRepository.save(tbJobErrorLog);
+        }
+
+        log.info(runningLogMsg.toString());
     }
 }

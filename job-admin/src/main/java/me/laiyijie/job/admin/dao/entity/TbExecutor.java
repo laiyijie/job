@@ -18,6 +18,9 @@ public class TbExecutor {
     private String ipAddress;
     private String onlineStatus;
     private Long lastHeartBeatTime;
+    private Double cpuLoad;
+    private Long freeMemory;
+    private Long totalMemory;
 
     @ManyToOne
     @JoinColumn(name = "executor_group_name")
@@ -61,5 +64,29 @@ public class TbExecutor {
 
     public void setExecutorGroup(TbExecutorGroup executorGroup) {
         this.executorGroup = executorGroup;
+    }
+
+    public Double getCpuLoad() {
+        return cpuLoad;
+    }
+
+    public void setCpuLoad(Double cpuLoad) {
+        this.cpuLoad = cpuLoad;
+    }
+
+    public Long getFreeMemory() {
+        return freeMemory;
+    }
+
+    public void setFreeMemory(Long freeMemory) {
+        this.freeMemory = freeMemory;
+    }
+
+    public Long getTotalMemory() {
+        return totalMemory;
+    }
+
+    public void setTotalMemory(Long totalMemory) {
+        this.totalMemory = totalMemory;
     }
 }

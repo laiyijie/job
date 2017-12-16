@@ -24,15 +24,17 @@ public class CommandRunner implements Runnable {
     private boolean stop;
     private RunJobMsg runJob;
     private Executor executor;
+    private String executorName;
 
     public CommandRunner(RunJobMsg runJob, JobQueueService jobQueueService,
                          ConcurrentHashMap<Integer, CommandRunner> runningJobMap,
-                         Executor executor) {
+                         Executor executor, String clientName) {
         this.runJob = runJob;
         this.stop = false;
         this.jobQueueService = jobQueueService;
         this.runningJobMap = runningJobMap;
         this.executor = executor;
+        this.executorName = clientName;
     }
 
     public void setStop(boolean stop) {
@@ -87,6 +89,8 @@ public class CommandRunner implements Runnable {
                 sendCurrentJobStatus(JobStatusMsg.FAILED);
                 runningJobMap.remove(runJob.getJobId());
             }
+            jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
+                    runJob.getJobId(), "exit_code: " + proc.exitValue(), true, System.currentTimeMillis(), executorName));
 
         } catch (IOException | InterruptedException ex) {
             log.error("error in job_id : " + runJob.getJobId() + " job_command:  " + runJob
@@ -125,7 +129,7 @@ public class CommandRunner implements Runnable {
                 while ((s = stdInput.readLine()) != null) {
                     jobQueueService.sendLog(
                             new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
-                                    runJob.getJobId(), s, false));
+                                    runJob.getJobId(), s, false, System.currentTimeMillis(), executorName));
                     log.info(s);
                 }
             } catch (IOException ex) {
@@ -141,7 +145,7 @@ public class CommandRunner implements Runnable {
                 while ((s = stdError.readLine()) != null) {
                     jobQueueService.sendLog(
                             new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
-                                    runJob.getJobId(), s, true));
+                                    runJob.getJobId(), s, true, System.currentTimeMillis(), executorName));
                     log.info(s);
                 }
             } catch (IOException ex) {
