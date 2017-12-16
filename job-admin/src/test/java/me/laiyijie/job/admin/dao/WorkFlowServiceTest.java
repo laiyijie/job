@@ -62,4 +62,9 @@ public class WorkFlowServiceTest {
 
         System.out.println(JSON.toJSONString(tbJobGroupRepository.findAll()));
     }
+
+    @Test
+    public void os_name() {
+        System.out.println(System.getProperty("os.name"));
+    }
 }

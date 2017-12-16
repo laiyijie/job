@@ -212,6 +212,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         tbJobRepository.save(job);
     }
 
+    //TODO change this to choose the suitable executor
     private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
         List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Name(tbExecutorGroup.getName());
         if (tbExecutors.isEmpty())
