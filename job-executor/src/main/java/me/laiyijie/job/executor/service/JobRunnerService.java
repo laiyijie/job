@@ -6,6 +6,7 @@ import me.laiyijie.job.message.executor.StopJobMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,6 +20,8 @@ import java.util.concurrent.Executors;
 public class JobRunnerService {
     @Autowired
     private JobQueueService jobQueueService;
+    @Value("${job.executor.name}")
+    private String executorName;
     private Executor executor = Executors.newCachedThreadPool();
 
     private Logger log = LoggerFactory.getLogger(JobRunnerService.class);
@@ -29,7 +32,7 @@ public class JobRunnerService {
             log.error("the job already run in this executor : " + runJob.getJobId());
             return;
         }
-        CommandRunner shellCommandThread = new CommandRunner(runJob, jobQueueService, runningJobMap, executor);
+        CommandRunner shellCommandThread = new CommandRunner(runJob, jobQueueService, runningJobMap, executor, executorName);
         executor.execute(shellCommandThread);
     }
 
