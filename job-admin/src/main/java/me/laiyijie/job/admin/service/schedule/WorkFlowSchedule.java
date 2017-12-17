@@ -44,7 +44,7 @@ public class WorkFlowSchedule {
     @Scheduled(fixedDelay = 1000)
     public void scheduleRunningWorkFlows() {
         log.debug(" in  schedule running work flow!");
-        log.debug(" workflow info: " + tbWorkFlowRepository.findAll());
+        log.debug(" running workflow info: " + tbWorkFlowRepository.findAll());
         List<TbWorkFlow> workFlows = tbWorkFlowRepository.findAllByStatus(RunningStatus.RUNNING);
         for (TbWorkFlow workFlow : workFlows) {
             try {
@@ -131,6 +131,21 @@ public class WorkFlowSchedule {
         }
     }
 
+    @Scheduled(fixedDelay = 3000)
+    public void refreshStoppingWorkFlows() {
+        log.debug(" in  schedule stopping work flow!");
+        log.debug(" stopping workflow info: " + tbWorkFlowRepository.findAll());
+        List<TbWorkFlow> workFlows = tbWorkFlowRepository.findAllByStatus(RunningStatus.STOPPING);
+        for (TbWorkFlow workFlow : workFlows) {
+            Long jobs = tbJobRepository.countByJobGroup_WorkFlow_IdAndStatus(workFlow.getId(), RunningStatus.STOPPING);
+            jobs += tbJobRepository.countByJobGroup_WorkFlow_IdAndStatus(workFlow.getId(), RunningStatus.STOPPING);
+            if (jobs != 0)
+                continue;
+            workFlow.setStatus(RunningStatus.STOPPED);
+            tbWorkFlowRepository.save(workFlow);
+        }
+    }
+
     @Scheduled(fixedDelay = 5000)
     public void checkOfflineExecutor() {
         List<TbExecutor> executors = tbExecutorRepository.findAllByLastHeartBeatTimeLessThan(System.currentTimeMillis() - OFFLINE_TIME * 1000);
@@ -144,7 +159,8 @@ public class WorkFlowSchedule {
 
     @Scheduled(fixedDelay = 5000)
     public void checkOfflineJob() {
-        List<TbJob> jobs = tbJobRepository.findAllByStatusAndLastRunningBeatTimeLessThan(RunningStatus.RUNNING, System.currentTimeMillis() - OFFLINE_TIME * 1000);
+        List<TbJob> jobs = tbJobRepository.findAllByStatusAndLastRunningBeatTimeLessThan(RunningStatus.RUNNING,
+                System.currentTimeMillis() - OFFLINE_TIME * 1000);
         log.debug("check off line job: " + JSON.toJSONString(jobs));
         for (TbJob job : jobs) {
             job.setStatus(RunningStatus.FAILED);

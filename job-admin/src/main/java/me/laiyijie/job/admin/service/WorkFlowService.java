@@ -35,4 +35,6 @@ public interface WorkFlowService {
     void resumeWorkFlow(Integer id);
 
     void runJob(Integer jobId);
+
+    void stopJob(Integer jobId);
 }

@@ -9,4 +9,5 @@ public interface RunningStatus {
     String STOPPED = "STOPPED";
     String FINISHED = "FINISHED";
     String FAILED = "FAILED";
+    String STOPPING = "STOPPING";
 }

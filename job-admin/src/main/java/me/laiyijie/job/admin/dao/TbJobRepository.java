@@ -11,7 +11,14 @@ import java.util.stream.Stream;
  */
 public interface TbJobRepository extends CrudRepository<TbJob, Integer> {
     List<TbJob> findAll();
+
     List<TbJob> findALlByJobGroup_WorkFlow_id(Integer workFlowId);
+
+    List<TbJob> findAllByJobGroup_WorkFlow_IdAndStatus(Integer workFlowId, String status);
+
     List<TbJob> findAllByJobGroup_Id(Integer groupId);
-    List<TbJob> findAllByStatusAndLastRunningBeatTimeLessThan(String status,Long time);
+
+    List<TbJob> findAllByStatusAndLastRunningBeatTimeLessThan(String status, Long time);
+
+    Long countByJobGroup_WorkFlow_IdAndStatus(Integer workFlowId, String status);
 }

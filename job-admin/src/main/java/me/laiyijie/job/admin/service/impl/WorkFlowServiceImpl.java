@@ -7,6 +7,7 @@ import me.laiyijie.job.admin.service.exception.BusinessException;
 import me.laiyijie.job.admin.service.mq.JobQueueService;
 import me.laiyijie.job.message.RunningStatus;
 import me.laiyijie.job.message.executor.RunJobMsg;
+import me.laiyijie.job.message.executor.StopJobMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,22 +160,33 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         if (RunningStatus.RUNNING.equals(workFlow.getStatus()))
             throw new BusinessException("workflow is running!");
         workFlow.setStatus(RunningStatus.RUNNING);
-        tbJobGroupRepository.findAllByWorkFlow_Id(id).forEach((group) -> {
-            group.setStatus(RunningStatus.INIT);
-            tbJobGroupRepository.save(group);
-        });
-        tbJobRepository.findALlByJobGroup_WorkFlow_id(id).forEach((job) -> {
-            job.setStatus(RunningStatus.INIT);
-            tbJobRepository.save(job);
-        });
+        tbJobGroupRepository.findAllByWorkFlow_Id(id)
+                            .forEach((group) -> {
+                                group.setStatus(RunningStatus.INIT);
+                                tbJobGroupRepository.save(group);
+                            });
+        tbJobRepository.findALlByJobGroup_WorkFlow_id(id)
+                       .forEach((job) -> {
+                           job.setStatus(RunningStatus.INIT);
+                           tbJobRepository.save(job);
+                       });
         workFlow.setLastRunTime(System.currentTimeMillis());
         tbWorkFlowRepository.save(workFlow);
     }
 
     @Override
     public void stopWorkFlow(Integer id) {
-        //TODO
-
+        TbWorkFlow workFlow = tbWorkFlowRepository.findOne(id);
+        if (workFlow == null)
+            throw new BusinessException("workflow not exist!");
+        if (!RunningStatus.RUNNING.equals(workFlow.getStatus()))
+            throw new BusinessException("cannot stop not running workflow");
+        workFlow.setStatus(RunningStatus.STOPPING);
+        tbWorkFlowRepository.save(workFlow);
+        List<TbJob> runningJobs = tbJobRepository.findAllByJobGroup_WorkFlow_IdAndStatus(id, RunningStatus.RUNNING);
+        for (TbJob job : runningJobs) {
+            stopJob(job.getId());
+        }
     }
 
     @Override
@@ -199,17 +211,31 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                 job.getExecutorGroup());
         if (tbExecutor == null) {
             job.setStatus(RunningStatus.FAILED);
-            log.error("job_id: " + jobId + "  executor_group_name:" + job.getExecutorGroup().getName() + " error msg: no executors online ");
+            log.error("job_id: " + jobId + "  executor_group_name:" + job.getExecutorGroup()
+                                                                         .getName() + " error msg: no executors online ");
             tbJobRepository.save(job);
             return;
         }
-
         jobQueueService.sendRunJobToExecutor(tbExecutor.getName(),
-                new RunJobMsg(job.getJobGroup().getWorkFlow().getId(), job.getJobGroup().getId(), job.getId(), job.getScript()));
+                new RunJobMsg(job.getJobGroup()
+                                 .getWorkFlow()
+                                 .getId(), job.getJobGroup()
+                                              .getId(), job.getId(), job.getScript()));
 
         job.setStatus(RunningStatus.RUNNING);
         job.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(job);
+    }
+
+    @Override
+    public void stopJob(Integer jobId) {
+        TbJob job = tbJobRepository.findOne(jobId);
+        if (job == null)
+            return;
+        if (!RunningStatus.RUNNING.equals(job.getStatus()))
+            return;
+        jobQueueService.sendStopJobToExecutor(job.getCurrentExecutor()
+                                                 .getName(), new StopJobMsg(job.getId()));
     }
 
     //TODO change this to choose the suitable executor

@@ -27,7 +27,7 @@ public class JobHandler {
 
     @RabbitListener
     public void handle(StopJobMsg stopJobMsg){
-        //TODO need to stop
+        jobRunnerService.stopShell(stopJobMsg);
         log.debug("receive stop job : " + stopJobMsg);
     }
 }

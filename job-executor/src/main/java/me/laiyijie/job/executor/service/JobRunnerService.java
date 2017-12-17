@@ -26,7 +26,6 @@ public class JobRunnerService {
 
     public void runShell(RunJobMsg runJob) {
         if (runningJobMap.containsKey(runJob.getJobId())) {
-            //TODO need log error
             log.error("the job already run in this executor : " + runJob.getJobId());
             return;
         }

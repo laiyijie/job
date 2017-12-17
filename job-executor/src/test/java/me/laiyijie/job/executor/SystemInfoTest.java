@@ -14,14 +14,20 @@ import java.lang.management.MemoryManagerMXBean;
 @RunWith(JUnit4.class)
 public class SystemInfoTest {
     @Test
-    public void te() {
+    public void te() throws InterruptedException {
         System.out.println("yeahs");
-        System.out.println("free: " + Runtime.getRuntime().freeMemory());
-        System.out.println("max: " + Runtime.getRuntime().maxMemory());
-        System.out.println("total: " + Runtime.getRuntime().totalMemory());
+        System.out.println("free: " + Runtime.getRuntime()
+                                             .freeMemory());
+        System.out.println("max: " + Runtime.getRuntime()
+                                            .maxMemory());
+        System.out.println("total: " + Runtime.getRuntime()
+                                              .totalMemory());
         OperatingSystemMXBean bean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         System.out.println("free_physical: " + bean.getFreePhysicalMemorySize());
         System.out.println(" total: " + bean.getTotalPhysicalMemorySize());
         System.out.println("cpuload :" + bean.getSystemCpuLoad());
+        Thread.sleep(5000);
+
+
     }
 }
