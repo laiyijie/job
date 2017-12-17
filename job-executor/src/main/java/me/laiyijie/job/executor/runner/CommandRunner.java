@@ -69,7 +69,7 @@ public class CommandRunner implements Runnable {
 
             while (proc.isAlive()) {
                 if (stop) {
-                    proc.destroy();
+                    proc.destroyForcibly();
                     sendCurrentJobStatus(JobStatusMsg.STOPPED);
                     runningJobMap.remove(runJob.getJobId());
                     log.info(" JOB_STOPPED: " + runJob.getJobId());
