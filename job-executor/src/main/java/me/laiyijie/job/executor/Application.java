@@ -25,12 +25,5 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class);
     }
-
-    @Bean
-    public CommandLineRunner runner() {
-        return (args) -> {
-            jobRunnerService.runShell(new RunJobMsg(1, 1, 1, "mvn -v"));
-//            log.error(System.getenv("Path"));
-        };
-    }
+    
 }
