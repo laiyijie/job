@@ -11,5 +11,6 @@ import java.util.List;
 public interface TbExecutorRepository extends CrudRepository<TbExecutor, String> {
 
     List<TbExecutor> findAllByExecutorGroup_Name(String gourpId);
+    List<TbExecutor> findByExecutorGroup_NameAndOnlineStatus(String groupName,String status);
     List<TbExecutor> findAllByLastHeartBeatTimeLessThan(Long time);
 }

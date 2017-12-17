@@ -242,17 +242,19 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                 .getName(), new StopJobMsg(job.getId()));
     }
 
+    //TODO algorithm
     private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
-        List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Name(tbExecutorGroup.getName());
+        List<TbExecutor> tbExecutors = tbExecutorRepository
+                .findByExecutorGroup_NameAndOnlineStatus(tbExecutorGroup.getName(), TbExecutor.ONLINE);
         if (tbExecutors.isEmpty())
             return null;
         tbExecutors.sort(Comparator.comparingLong(TbExecutor::getFreeMemory));
         return tbExecutors.get(tbExecutors.size() - 1);
     }
 
-    private void refreshAllJobRetryTimes(Integer workFlowId){
+    private void refreshAllJobRetryTimes(Integer workFlowId) {
         List<TbJob> jobs = tbJobRepository.findALlByJobGroup_WorkFlow_id(workFlowId);
-        for (TbJob job : jobs){
+        for (TbJob job : jobs) {
             job.setRetryTimes(0);
             job.setRetryFlag(false);
             tbJobRepository.save(job);
