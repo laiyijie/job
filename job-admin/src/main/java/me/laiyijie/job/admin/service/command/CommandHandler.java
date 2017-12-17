@@ -96,5 +96,4 @@ public class CommandHandler {
         simpMessagingTemplate.convertAndSend("/topic/sysinfo", systemInfoMsg);
     }
 
-
 }

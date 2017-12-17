@@ -1,9 +1,11 @@
 package me.laiyijie.job.message.command;
 
+import java.io.Serializable;
+
 /**
  * Created by laiyijie on 12/16/17.
  */
-public class SystemInfoMsg {
+public class SystemInfoMsg implements Serializable {
     private String groupName;
     private String executorName;
     private Double cpuLoad;
