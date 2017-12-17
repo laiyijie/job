@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface TbJobErrorLogRepository extends CrudRepository<TbJobErrorLog, Long> {
 
-    Page<TbJobErrorLog> findAllByOrderByLogTimeDesc(Pageable pageable);
+    List<TbJobErrorLog> findAllByOrderByLogTimeDesc(Pageable pageable);
 
-    Page<TbJobErrorLog> findAllByJobIdOrderByLogTimeDesc(Integer jobId, Pageable pageable);
+    List<TbJobErrorLog> findAllByJobIdOrderByLogTimeDesc(Integer jobId, Pageable pageable);
 }

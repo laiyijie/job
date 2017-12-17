@@ -33,8 +33,8 @@ public class JobErrorLogTest {
             saveLog(runningLogMsg);
         }
         Pageable pageable = new PageRequest(0,5);
-//        log.info(JSON.toJSONString(repository.findAllByOrderByLogTimeDesc(pageable),true));
-        log.info(JSON.toJSONString(repository.findAllByJobIdOrderByLogTimeDesc(1,pageable),true));
+        log.info(JSON.toJSONString(repository.findAllByOrderByLogTimeDesc(pageable),true));
+//        log.info(JSON.toJSONString(repository.findAllByJobIdOrderByLogTimeDesc(1,pageable),true));
     }
 
 

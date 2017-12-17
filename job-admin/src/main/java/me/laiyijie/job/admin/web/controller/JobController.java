@@ -15,17 +15,22 @@ import me.laiyijie.job.swagger.api.JobApi;
 import me.laiyijie.job.swagger.api.JobsApi;
 import me.laiyijie.job.swagger.api.WorkflowsApi;
 import me.laiyijie.job.swagger.model.Job;
+import me.laiyijie.job.swagger.model.JobErrorLog;
 import me.laiyijie.job.swagger.model.JobGroup;
 import me.laiyijie.job.swagger.model.WorkFlow;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -40,6 +45,12 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     private WorkFlowShow workFlowShow;
     @Autowired
     private WorkFlowConverter workFlowConverter;
+
+    @Override
+    public ResponseEntity<List<JobErrorLog>> jobErrorLogsGet(@NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageSize", required = true) Integer pageSize, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageNum", required = true) Integer pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Pageable pageable = new PageRequest(pageNum, pageSize);
+        return ResponseEntity.ok(workFlowShow.getAllJobErrorLog(pageable));
+    }
 
     @Override
     public ResponseEntity<Void> jobGroupsGroupIdDelete(@ApiParam(value = "", required = true) @PathVariable("groupId") Integer groupId, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -81,6 +92,11 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     }
 
     @Override
+    public ResponseEntity<List<JobErrorLog>> jobsJobIdErrorLogGet(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageSize", required = true) Integer pageSize, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageNum", required = true) Integer pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return ResponseEntity.ok(workFlowShow.getJobErrorLogByJobId(jobId, new PageRequest(pageNum, pageSize)));
+    }
+
+    @Override
     public ResponseEntity<Job> jobsJobIdGet(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Job job = workFlowShow.getJob(jobId);
         if (job == null)
@@ -101,6 +117,12 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     @Override
     public ResponseEntity<Void> jobsJobIdRunPost(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         workFlowService.runJob(jobId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> jobsJobIdStopPost(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        workFlowService.stopJob(jobId);
         return ResponseEntity.ok().build();
     }
 
@@ -159,6 +181,12 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     @Override
     public ResponseEntity<Void> workflowsWorkFlowIdRunPost(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         workFlowService.runWorkFlow(workFlowId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> workflowsWorkFlowIdStopPost(@ApiParam(value = "", required = true) @PathVariable("workFlowId") Integer workFlowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        workFlowService.stopWorkFlow(workFlowId);
         return ResponseEntity.ok().build();
     }
 

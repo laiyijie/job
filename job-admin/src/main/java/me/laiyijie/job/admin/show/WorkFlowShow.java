@@ -1,13 +1,18 @@
 package me.laiyijie.job.admin.show;
 
+import me.laiyijie.job.admin.dao.TbJobErrorLogRepository;
 import me.laiyijie.job.admin.dao.TbJobGroupRepository;
 import me.laiyijie.job.admin.dao.TbJobRepository;
 import me.laiyijie.job.admin.dao.TbWorkFlowRepository;
+import me.laiyijie.job.admin.dao.entity.TbJobErrorLog;
 import me.laiyijie.job.admin.show.converter.WorkFlowConverter;
 import me.laiyijie.job.swagger.model.Job;
+import me.laiyijie.job.swagger.model.JobErrorLog;
 import me.laiyijie.job.swagger.model.JobGroup;
 import me.laiyijie.job.swagger.model.WorkFlow;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,6 +31,8 @@ public class WorkFlowShow {
     private TbJobRepository tbJobRepository;
     @Autowired
     private TbWorkFlowRepository tbWorkFlowRepository;
+    @Autowired
+    private TbJobErrorLogRepository tbJobErrorLogRepository;
 
     public List<Job> getJobsInGroup(Integer groupId) {
         return tbJobRepository.findAllByJobGroup_Id(groupId).stream()
@@ -54,5 +61,19 @@ public class WorkFlowShow {
 
     public WorkFlow getWorkFlow(Integer workFlowId) {
         return workFlowConverter.convertToWorkFlow(tbWorkFlowRepository.findOne(workFlowId));
+    }
+
+    public List<JobErrorLog> getAllJobErrorLog(Pageable pageable) {
+        return tbJobErrorLogRepository.findAllByOrderByLogTimeDesc(pageable)
+                .stream()
+                .map((log) -> workFlowConverter.convertToJobErrorLog(log))
+                .collect(Collectors.toList());
+    }
+
+    public List<JobErrorLog> getJobErrorLogByJobId(Integer jobId, Pageable pageable) {
+        return tbJobErrorLogRepository.findAllByJobIdOrderByLogTimeDesc(jobId, pageable)
+                .stream()
+                .map((log) -> workFlowConverter.convertToJobErrorLog(log))
+                .collect(Collectors.toList());
     }
 }

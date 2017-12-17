@@ -4,9 +4,11 @@ import me.laiyijie.job.admin.dao.TbExecutorGroupRepository;
 import me.laiyijie.job.admin.dao.TbJobGroupRepository;
 import me.laiyijie.job.admin.dao.TbWorkFlowRepository;
 import me.laiyijie.job.admin.dao.entity.TbJob;
+import me.laiyijie.job.admin.dao.entity.TbJobErrorLog;
 import me.laiyijie.job.admin.dao.entity.TbJobGroup;
 import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
 import me.laiyijie.job.swagger.model.Job;
+import me.laiyijie.job.swagger.model.JobErrorLog;
 import me.laiyijie.job.swagger.model.JobGroup;
 import me.laiyijie.job.swagger.model.WorkFlow;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,20 @@ public class WorkFlowConverter {
         job.setExecutorGroup(executorConverter.convertToExecutorGroupWithoutExecutors(tbJob.getExecutorGroup()));
         job.setCurrentExecutor(executorConverter.convertToExecutor(tbJob.getCurrentExecutor()));
         return job;
+    }
+
+    public JobErrorLog convertToJobErrorLog(TbJobErrorLog tbJobErrorLog) {
+        if (tbJobErrorLog == null)
+            return null;
+        JobErrorLog jobErrorLog = new JobErrorLog();
+        jobErrorLog.setId(tbJobErrorLog.getId());
+        jobErrorLog.setJobId(tbJobErrorLog.getJobId());
+        jobErrorLog.setContent(tbJobErrorLog.getContent());
+        jobErrorLog.setJobGroupId(tbJobErrorLog.getJobGroupId());
+        jobErrorLog.setExecutorName(tbJobErrorLog.getExecutorName());
+        jobErrorLog.setTime(tbJobErrorLog.getLogTime());
+        jobErrorLog.setWorkflowId(tbJobErrorLog.getWorkflowId());
+        return jobErrorLog;
     }
 
 
