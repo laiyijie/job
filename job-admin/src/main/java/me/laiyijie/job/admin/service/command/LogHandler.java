@@ -49,9 +49,9 @@ public class LogHandler {
             TbJob tbJob = tbJobRepository.findOne(runningLogMsg.getJobId());
             if (tbJob == null)
                 return;
-            if (tbJob.getMaxRetryTimes() == 0)
+            if (tbJob.getMaxRetryTimes() ==null || tbJob.getMaxRetryTimes() == 0)
                 return;
-            if (Objects.equals(tbJob.getRetryTimes(), tbJob.getMaxRetryTimes()))
+            if (tbJob.getMaxRetryTimes().equals(tbJob.getRetryTimes()))
                 return;
             if (RegexUtil.isMatch(tbJob.getRetryRegex(), runningLogMsg.getContent())) {
                 tbJob.setRetryFlag(true);
