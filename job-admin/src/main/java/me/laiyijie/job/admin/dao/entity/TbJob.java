@@ -17,6 +17,11 @@ public class TbJob {
     private String script;
 
     private Long lastRunningBeatTime;
+    
+    private String retryRegex;
+    private Integer retryTimes;
+    private Integer maxRetryTimes;
+    private Boolean retryFlag;
 
     @ManyToOne
     @JoinColumn(name = "job_group_id")
@@ -98,5 +103,37 @@ public class TbJob {
 
     public void setJobGroup(TbJobGroup jobGroup) {
         this.jobGroup = jobGroup;
+    }
+
+    public String getRetryRegex() {
+        return retryRegex;
+    }
+
+    public void setRetryRegex(String retryRegex) {
+        this.retryRegex = retryRegex;
+    }
+
+    public Integer getRetryTimes() {
+        return retryTimes;
+    }
+
+    public void setRetryTimes(Integer retryTimes) {
+        this.retryTimes = retryTimes;
+    }
+
+    public Integer getMaxRetryTimes() {
+        return maxRetryTimes;
+    }
+
+    public void setMaxRetryTimes(Integer maxRetryTimes) {
+        this.maxRetryTimes = maxRetryTimes;
+    }
+
+    public Boolean getRetryFlag() {
+        return retryFlag;
+    }
+
+    public void setRetryFlag(Boolean retryFlag) {
+        this.retryFlag = retryFlag;
     }
 }

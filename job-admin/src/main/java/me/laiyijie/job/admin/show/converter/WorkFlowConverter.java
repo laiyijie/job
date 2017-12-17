@@ -63,6 +63,9 @@ public class WorkFlowConverter {
         job.setJobGroupId(tbJob.getJobGroup().getId());
         job.setExecutorGroup(executorConverter.convertToExecutorGroupWithoutExecutors(tbJob.getExecutorGroup()));
         job.setCurrentExecutor(executorConverter.convertToExecutor(tbJob.getCurrentExecutor()));
+        job.setRetryRegex(tbJob.getRetryRegex());
+        job.setCurrentRetryTimes(tbJob.getRetryTimes());
+        job.setMaxRetryTimes(tbJob.getMaxRetryTimes());
         return job;
     }
 
@@ -88,6 +91,8 @@ public class WorkFlowConverter {
         tbJob.setScript(job.getScript());
         tbJob.setDescription(job.getDescription());
         tbJob.setId(job.getId());
+        tbJob.setMaxRetryTimes(job.getMaxRetryTimes());
+        tbJob.setRetryRegex(job.getRetryRegex());
         tbJob.setJobGroup(tbJobGroupRepository.findOne(job.getJobGroupId()));
         return tbJob;
     }

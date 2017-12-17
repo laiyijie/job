@@ -78,7 +78,24 @@ public class WorkFlowSchedule {
                     tbJobGroupRepository.save(tbJobGroup);
                     continue;
                 }
+                // check failed job to test if retry
+                boolean isRetry = false;
+                for (TbJob job : tbJobs) {
+                    if (RunningStatus.FAILED.equals(job.getStatus())) {
+                        if (job.getRetryFlag() && job.getRetryTimes() < job.getMaxRetryTimes()) {
+                            job.setRetryTimes(job.getRetryTimes() + 1);
+                            job.setRetryFlag(false);
+                            tbJobRepository.save(job);
+                            workFlowService.runJob(job.getId());
+                            isRetry = true;
+                        }
+                    }
+                }
+                // skip update the workflow and group status , when retry
+                if (isRetry)
+                    continue;
 
+                // update the workflow and group status, after schedule
                 Boolean isHaveFailed = false;
                 Boolean isAllFinish = true;
                 for (TbJob job : tbJobs) {

@@ -8,6 +8,7 @@ import me.laiyijie.job.admin.service.mq.JobQueueService;
 import me.laiyijie.job.message.RunningStatus;
 import me.laiyijie.job.message.executor.RunJobMsg;
 import me.laiyijie.job.message.executor.StopJobMsg;
+import me.laiyijie.job.swagger.model.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,6 +174,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                 });
         workFlow.setLastRunTime(System.currentTimeMillis());
         tbWorkFlowRepository.save(workFlow);
+        refreshAllJobRetryTimes(id);
     }
 
     @Override
@@ -199,6 +201,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
             throw new BusinessException("workflow is running!");
         workFlow.setStatus(RunningStatus.RUNNING);
         tbWorkFlowRepository.save(workFlow);
+        refreshAllJobRetryTimes(id);
     }
 
     @Override
@@ -245,5 +248,14 @@ public class WorkFlowServiceImpl implements WorkFlowService {
             return null;
         tbExecutors.sort(Comparator.comparingLong(TbExecutor::getFreeMemory));
         return tbExecutors.get(tbExecutors.size() - 1);
+    }
+
+    private void refreshAllJobRetryTimes(Integer workFlowId){
+        List<TbJob> jobs = tbJobRepository.findALlByJobGroup_WorkFlow_id(workFlowId);
+        for (TbJob job : jobs){
+            job.setRetryTimes(0);
+            job.setRetryFlag(false);
+            tbJobRepository.save(job);
+        }
     }
 }
