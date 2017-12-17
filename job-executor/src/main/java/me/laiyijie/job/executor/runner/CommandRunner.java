@@ -102,17 +102,17 @@ public class CommandRunner implements Runnable {
     }
 
     private Process runShellInLinux() throws IOException, InterruptedException {
-        String tmpFileName = "/tmp/job" + System.currentTimeMillis() + ".sh";
+        String tmpFileName = "tmp_job_" + System.currentTimeMillis() + ".sh";
         PrintWriter writer = new PrintWriter(tmpFileName, "UTF-8");
         writer.println(runJob.getJobCommand());
         writer.close();
         Runtime.getRuntime().exec("chmod 777 " + tmpFileName).waitFor();
-        ProcessBuilder pb = new ProcessBuilder(tmpFileName);
+        ProcessBuilder pb = new ProcessBuilder("./" + tmpFileName);
         return pb.start();
     }
 
     private Process runBatInWindows() throws IOException, InterruptedException {
-        String tmpFileName = "job" + System.currentTimeMillis() + ".bat";
+        String tmpFileName = "tmp_job_" + System.currentTimeMillis() + ".bat";
         PrintWriter writer = new PrintWriter(tmpFileName, "UTF-8");
         writer.println(runJob.getJobCommand());
         writer.close();
@@ -127,10 +127,10 @@ public class CommandRunner implements Runnable {
                         InputStreamReader(proc.getInputStream()));
                 String s;
                 while ((s = stdInput.readLine()) != null) {
+                    log.info(s);
                     jobQueueService.sendLog(
                             new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
                                     runJob.getJobId(), s, false, System.currentTimeMillis(), executorName));
-                    log.info(s);
                 }
             } catch (IOException ex) {
                 log.error("in NORMLOG JOB_ID:" + runJob.getJobId() + getTrace(ex));
@@ -143,10 +143,10 @@ public class CommandRunner implements Runnable {
                         InputStreamReader(proc.getErrorStream()));
                 String s;
                 while ((s = stdError.readLine()) != null) {
+                    log.info(s);
                     jobQueueService.sendLog(
                             new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
                                     runJob.getJobId(), s, true, System.currentTimeMillis(), executorName));
-                    log.info(s);
                 }
             } catch (IOException ex) {
                 log.error("in ERRORLOG JOB_ID:" + runJob.getJobId() + getTrace(ex));

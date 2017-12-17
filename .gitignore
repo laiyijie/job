@@ -2,4 +2,4 @@
 *.iml
 target/
 */target/
-*.bat
+tmp_job_*
