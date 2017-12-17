@@ -238,7 +238,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         jobQueueService.sendStopJobToExecutor(job.getCurrentExecutor()
                 .getName(), new StopJobMsg(job.getId()));
     }
-        
+
     private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
         List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Name(tbExecutorGroup.getName());
         if (tbExecutors.isEmpty())
