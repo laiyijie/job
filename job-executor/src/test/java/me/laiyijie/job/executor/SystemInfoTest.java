@@ -1,12 +1,17 @@
 package me.laiyijie.job.executor;
 
 import com.sun.management.OperatingSystemMXBean;
+import me.laiyijie.job.message.command.JobStatusMsg;
+import me.laiyijie.job.message.executor.StopJobMsg;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryManagerMXBean;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by laiyijie on 12/16/17.
@@ -26,8 +31,17 @@ public class SystemInfoTest {
         System.out.println("free_physical: " + bean.getFreePhysicalMemorySize());
         System.out.println(" total: " + bean.getTotalPhysicalMemorySize());
         System.out.println("cpuload :" + bean.getSystemCpuLoad());
-        Thread.sleep(5000);
 
 
+    }
+
+    @Test
+    public void t(){
+        List<StopJobMsg> stopJobMsgList =  new ArrayList<>();
+        for (int i = 0; i<100; i++){
+            stopJobMsgList.add(new StopJobMsg(i));
+        }
+        stopJobMsgList.sort(Comparator.comparingInt(StopJobMsg::getJobId));
+        System.out.println(stopJobMsgList.get(0).getJobId());
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -161,15 +162,15 @@ public class WorkFlowServiceImpl implements WorkFlowService {
             throw new BusinessException("workflow is running!");
         workFlow.setStatus(RunningStatus.RUNNING);
         tbJobGroupRepository.findAllByWorkFlow_Id(id)
-                            .forEach((group) -> {
-                                group.setStatus(RunningStatus.INIT);
-                                tbJobGroupRepository.save(group);
-                            });
+                .forEach((group) -> {
+                    group.setStatus(RunningStatus.INIT);
+                    tbJobGroupRepository.save(group);
+                });
         tbJobRepository.findALlByJobGroup_WorkFlow_id(id)
-                       .forEach((job) -> {
-                           job.setStatus(RunningStatus.INIT);
-                           tbJobRepository.save(job);
-                       });
+                .forEach((job) -> {
+                    job.setStatus(RunningStatus.INIT);
+                    tbJobRepository.save(job);
+                });
         workFlow.setLastRunTime(System.currentTimeMillis());
         tbWorkFlowRepository.save(workFlow);
     }
@@ -212,15 +213,15 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         if (tbExecutor == null) {
             job.setStatus(RunningStatus.FAILED);
             log.error("job_id: " + jobId + "  executor_group_name:" + job.getExecutorGroup()
-                                                                         .getName() + " error msg: no executors online ");
+                    .getName() + " error msg: no executors online ");
             tbJobRepository.save(job);
             return;
         }
         jobQueueService.sendRunJobToExecutor(tbExecutor.getName(),
                 new RunJobMsg(job.getJobGroup()
-                                 .getWorkFlow()
-                                 .getId(), job.getJobGroup()
-                                              .getId(), job.getId(), job.getScript()));
+                        .getWorkFlow()
+                        .getId(), job.getJobGroup()
+                        .getId(), job.getId(), job.getScript()));
 
         job.setStatus(RunningStatus.RUNNING);
         job.setLastRunningBeatTime(System.currentTimeMillis());
@@ -235,14 +236,14 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         if (!RunningStatus.RUNNING.equals(job.getStatus()))
             return;
         jobQueueService.sendStopJobToExecutor(job.getCurrentExecutor()
-                                                 .getName(), new StopJobMsg(job.getId()));
+                .getName(), new StopJobMsg(job.getId()));
     }
-
-    //TODO change this to choose the suitable executor
+        
     private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
         List<TbExecutor> tbExecutors = tbExecutorRepository.findAllByExecutorGroup_Name(tbExecutorGroup.getName());
         if (tbExecutors.isEmpty())
             return null;
-        return tbExecutors.get(0);
+        tbExecutors.sort(Comparator.comparingLong(TbExecutor::getFreeMemory));
+        return tbExecutors.get(tbExecutors.size() - 1);
     }
 }
