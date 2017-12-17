@@ -57,13 +57,12 @@ public class CommandHandler {
             tbExecutor = new TbExecutor();
             tbExecutor.setName(heartBeatMsg.getExecutorName());
             tbExecutor.setExecutorGroup(tbExecutorGroup);
-            tbExecutor.setOnlineStatus(TbExecutor.ONLINE);
-            tbExecutor.setLastHeartBeatTime(System.currentTimeMillis());
-            tbExecutorRepository.save(tbExecutor);
-        } else {
-            tbExecutor.setLastHeartBeatTime(System.currentTimeMillis());
-            tbExecutorRepository.save(tbExecutor);
         }
+
+        tbExecutor.setOnlineStatus(TbExecutor.ONLINE);
+        tbExecutor.setLastHeartBeatTime(System.currentTimeMillis());
+        tbExecutorRepository.save(tbExecutor);
+
         log.debug("executor group:" + JSON.toJSONString(tbExecutorRepository.findAll()));
     }
 
