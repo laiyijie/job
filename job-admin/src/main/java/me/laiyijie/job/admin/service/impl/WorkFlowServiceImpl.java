@@ -228,6 +228,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
         job.setStatus(RunningStatus.RUNNING);
         job.setLastRunningBeatTime(System.currentTimeMillis());
+        job.setCurrentExecutor(tbExecutor);
         tbJobRepository.save(job);
     }
 
