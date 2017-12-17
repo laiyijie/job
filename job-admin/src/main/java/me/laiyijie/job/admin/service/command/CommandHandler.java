@@ -11,6 +11,7 @@ import me.laiyijie.job.admin.service.mq.JobQueueNameService;
 import me.laiyijie.job.message.RunningStatus;
 import me.laiyijie.job.message.command.HeartBeatMsg;
 import me.laiyijie.job.message.command.JobStatusMsg;
+import me.laiyijie.job.message.command.SystemInfoMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -80,6 +81,19 @@ public class CommandHandler {
         tbJob.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(tbJob);
         simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
+    }
+
+    @RabbitHandler
+    public void handle(SystemInfoMsg systemInfoMsg) {
+        log.debug("system_info: " + systemInfoMsg.toString());
+        TbExecutor tbExecutor = tbExecutorRepository.findOne(systemInfoMsg.getExecutorName());
+        if (tbExecutor == null)
+            return;
+        tbExecutor.setFreeMemory(systemInfoMsg.getFreePhysicalMemory());
+        tbExecutor.setTotalMemory(systemInfoMsg.getTotalPhysicalMemory());
+        tbExecutor.setCpuLoad(systemInfoMsg.getCpuLoad());
+        tbExecutorRepository.save(tbExecutor);
+        simpMessagingTemplate.convertAndSend("/topic/sysinfo", systemInfoMsg);
     }
 
 
