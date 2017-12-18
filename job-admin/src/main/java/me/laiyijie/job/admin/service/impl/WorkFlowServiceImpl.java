@@ -117,7 +117,8 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         tbJob.setName(job.getName());
         tbJob.setExecutorGroup(job.getExecutorGroup());
         tbJob.setScript(job.getScript());
-
+        tbJob.setRetryRegex(job.getRetryRegex());
+        tbJob.setMaxRetryTimes(job.getMaxRetryTimes());
         return tbJobRepository.save(tbJob);
     }
 
