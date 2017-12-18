@@ -16,6 +16,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by laiyijie on 11/30/17.
@@ -30,7 +31,6 @@ public class LogHandler {
     private TbJobErrorLogRepository tbJobErrorLogRepository;
     @Autowired
     private TbJobRepository tbJobRepository;
-
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
         simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);

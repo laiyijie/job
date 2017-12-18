@@ -71,29 +71,24 @@ public class CommandRunner implements Runnable {
             collectLog(proc);
 
             while (proc.isAlive()) {
-                log.debug("stop status????::::" + stop);
                 if (stop) {
-                    log.info("in stoping!!!!");
                     switch (osType) {
                         case Linux: {
                             Field f = proc.getClass()
                                           .getDeclaredField("pid");
                             f.setAccessible(true);
                             int pid = (int) f.get(proc);
-                            log.info("pid:" + pid);
                             Runtime.getRuntime()
                                    .exec("kill -9 " + pid);
                         }
                         break;
                         case Windows: {
                             WinProcess winProcess = new WinProcess(proc);
-                            log.info("pid: " + winProcess.getPid());
                             winProcess.killRecursively();
                         }
 
                         break;
                     }
-
 
                     sendCurrentJobStatus(JobStatusMsg.STOPPED);
                     runningJobMap.remove(runJob.getJobId());
@@ -108,14 +103,18 @@ public class CommandRunner implements Runnable {
                 sendCurrentJobStatus(JobStatusMsg.FINISHED);
                 runningJobMap.remove(runJob.getJobId());
                 log.info(" JOB_FINISHED: " + runJob.getJobId());
+                jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
+                        runJob.getJobId(), "exit_code: " + proc.exitValue(), false, System.currentTimeMillis(), executorName));
+
             } else {
                 log.info(" JOB_FINISHED with exitcode not 0, job_id: " + runJob
                         .getJobId() + " exit code : " + proc.exitValue());
                 sendCurrentJobStatus(JobStatusMsg.FAILED);
                 runningJobMap.remove(runJob.getJobId());
+                jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
+                        runJob.getJobId(), "exit_code: " + proc.exitValue(), true, System.currentTimeMillis(), executorName));
+
             }
-            jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
-                    runJob.getJobId(), "exit_code: " + proc.exitValue(), true, System.currentTimeMillis(), executorName));
             // delete tmp running file
             File file = new File(tmpFileName);
             file.delete();
