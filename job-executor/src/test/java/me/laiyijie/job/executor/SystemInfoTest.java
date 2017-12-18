@@ -51,12 +51,4 @@ public class SystemInfoTest {
         System.out.println(stopJobMsgList.get(0).getJobId());
     }
 
-    @Test
-    public void testCommonRunner() throws IOException, InterruptedException {
-        String file_name = "tmp_job_1513568423363.bat";
-        CommandLine commandLine = new CommandLine(file_name);
-        DefaultExecuteResultHandler defaultExecuteResultHandler = new DefaultExecuteResultHandler();
-        DefaultExecutor defaultExecutor = new DefaultExecutor();
-        defaultExecutor.execute(commandLine,defaultExecuteResultHandler);
-    }
 }
