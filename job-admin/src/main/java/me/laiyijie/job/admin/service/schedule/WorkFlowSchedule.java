@@ -154,10 +154,18 @@ public class WorkFlowSchedule {
         log.debug(" stopping workflow info: " + tbWorkFlowRepository.findAll());
         List<TbWorkFlow> workFlows = tbWorkFlowRepository.findAllByStatus(RunningStatus.STOPPING);
         for (TbWorkFlow workFlow : workFlows) {
+            TbJobGroup tbJobGroup = getCurrentWorkGroup(workFlow.getId());
+            if (tbJobGroup == null) {
+                workFlow.setStatus(RunningStatus.STOPPED);
+                tbWorkFlowRepository.save(workFlow);
+                continue;
+            }
             Long jobs = tbJobRepository.countByJobGroup_WorkFlow_IdAndStatus(workFlow.getId(), RunningStatus.STOPPING);
             jobs += tbJobRepository.countByJobGroup_WorkFlow_IdAndStatus(workFlow.getId(), RunningStatus.STOPPING);
             if (jobs != 0)
                 continue;
+            tbJobGroup.setStatus(RunningStatus.STOPPED);
+            tbJobGroupRepository.save(tbJobGroup);
             workFlow.setStatus(RunningStatus.STOPPED);
             tbWorkFlowRepository.save(workFlow);
         }
