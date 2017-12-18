@@ -1,23 +1,15 @@
 package me.laiyijie.job.executor;
 
 import com.sun.management.OperatingSystemMXBean;
-import me.laiyijie.job.message.command.JobStatusMsg;
 import me.laiyijie.job.message.executor.StopJobMsg;
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecuteResultHandler;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteWatchdog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryManagerMXBean;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  * Created by laiyijie on 12/16/17.
