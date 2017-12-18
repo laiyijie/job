@@ -57,7 +57,7 @@ public class CommandHandler {
             tbExecutor = new TbExecutor();
             tbExecutor.setName(heartBeatMsg.getExecutorName());
         }
-        
+
         tbExecutor.setExecutorGroup(tbExecutorGroup);
         tbExecutor.setOnlineStatus(TbExecutor.ONLINE);
         tbExecutor.setLastHeartBeatTime(System.currentTimeMillis());

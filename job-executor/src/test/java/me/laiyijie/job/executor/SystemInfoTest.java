@@ -58,10 +58,5 @@ public class SystemInfoTest {
         DefaultExecuteResultHandler defaultExecuteResultHandler = new DefaultExecuteResultHandler();
         DefaultExecutor defaultExecutor = new DefaultExecutor();
         defaultExecutor.execute(commandLine,defaultExecuteResultHandler);
-        Thread.sleep(2000);
-        Thread.sleep(10000);
-        Executors.newCachedThreadPool().execute(()->{
-
-        });
     }
 }
