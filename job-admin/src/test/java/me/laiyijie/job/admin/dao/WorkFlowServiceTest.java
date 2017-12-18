@@ -1,10 +1,12 @@
 package me.laiyijie.job.admin.dao;
 
 import com.alibaba.fastjson.JSON;
+import me.laiyijie.job.admin.dao.entity.TbJob;
 import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
 import me.laiyijie.job.admin.service.WorkFlowService;
 import me.laiyijie.job.admin.show.converter.WorkFlowConverter;
 import me.laiyijie.job.message.RunningStatus;
+import me.laiyijie.job.swagger.model.Job;
 import me.laiyijie.job.swagger.model.JobGroup;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
@@ -61,6 +63,32 @@ public class WorkFlowServiceTest {
         workFlowService.createJobGroup(workFlowConverter.convertToTbJobGroup(jobGroup));
 
         System.out.println(JSON.toJSONString(tbJobGroupRepository.findAll()));
+    }
+
+    @Test
+    public void testModifyJob(){
+        JobGroup jobGroup = new JobGroup();
+        jobGroup.setDescription("ttt");
+        jobGroup.setName("fuxk");
+        jobGroup.setWorkFlowId(1);
+        jobGroup.setStep(10);
+        jobGroup.setId(123);
+        workFlowService.createJobGroup(workFlowConverter.convertToTbJobGroup(jobGroup));
+
+        TbJob job = new TbJob();
+        job.setName("jj");
+        job.setJobGroup(tbJobGroupRepository.findOne(1));
+        job.setScript("ss");
+        workFlowService.createJob(job);
+        System.out.println(JSON.toJSONString(tbJobRepository.findAll(),true));
+
+        TbJob mjob = new TbJob();
+        mjob.setId(job.getId());
+        mjob.setName("jjssss");
+        mjob.setJobGroup(tbJobGroupRepository.findOne(1));
+        mjob.setScript("ss");
+        workFlowService.modifyJob(mjob);
+        System.out.println(JSON.toJSONString(tbJobRepository.findAll(),true));
     }
 
     @Test

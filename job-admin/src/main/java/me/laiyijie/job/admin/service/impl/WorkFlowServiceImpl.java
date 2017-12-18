@@ -1,5 +1,6 @@
 package me.laiyijie.job.admin.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import me.laiyijie.job.admin.dao.*;
 import me.laiyijie.job.admin.dao.entity.*;
 import me.laiyijie.job.admin.service.WorkFlowService;
@@ -111,13 +112,13 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         if (RunningStatus.RUNNING.equals(tbJob.getStatus())) {
             throw new BusinessException("job is running , cannot modify ");
         }
-
+        log.debug(JSON.toJSONString(tbJob, true));
         tbJob.setDescription(job.getDescription());
         tbJob.setName(job.getName());
         tbJob.setExecutorGroup(job.getExecutorGroup());
         tbJob.setScript(job.getScript());
 
-        return tbJobRepository.save(job);
+        return tbJobRepository.save(tbJob);
     }
 
     @Override
