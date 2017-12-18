@@ -7,6 +7,7 @@ import me.laiyijie.job.message.executor.RunJobMsg;
 import me.laiyijie.job.message.log.RunningLogMsg;
 import me.laiyijie.job.message.util.OsChecker;
 import me.laiyijie.job.message.util.OsType;
+import org.jvnet.winp.WinProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,23 +75,23 @@ public class CommandRunner implements Runnable {
                 if (stop) {
                     log.info("in stoping!!!!");
                     switch (osType) {
-                        case Linux:{
-                            Field f = proc.getClass().getDeclaredField("pid");
+                        case Linux: {
+                            Field f = proc.getClass()
+                                          .getDeclaredField("pid");
                             f.setAccessible(true);
                             int pid = (int) f.get(proc);
                             log.info("pid:" + pid);
-                            Runtime.getRuntime().exec("kill -9 " + pid);
+                            Runtime.getRuntime()
+                                   .exec("kill -9 " + pid);
+                        }
+                        break;
+                        case Windows: {
+                            WinProcess winProcess = new WinProcess(proc);
+                            log.info("pid: " + winProcess.getPid());
+                            winProcess.killRecursively();
                         }
 
-                            break;
-                        case Windows:{
-                            Field f = proc.getClass().getDeclaredField("pid");
-                            f.setAccessible(true);
-                            int pid = (int) f.get(proc);
-                            log.info("pid:" + pid);
-                        }
-
-                            break;
+                        break;
                     }
 
 
@@ -115,16 +116,16 @@ public class CommandRunner implements Runnable {
             }
             jobQueueService.sendLog(new RunningLogMsg(runJob.getWorkFlowId(), runJob.getJobGroupId(),
                     runJob.getJobId(), "exit_code: " + proc.exitValue(), true, System.currentTimeMillis(), executorName));
-
+            // delete tmp running file
+            File file = new File(tmpFileName);
+            file.delete();
         } catch (IOException | InterruptedException ex) {
             log.error("error in job_id : " + runJob.getJobId() + " job_command:  " + runJob
                     .getJobCommand());
             log.error(getTrace(ex));
             sendCurrentJobStatus(JobStatusMsg.FAILED);
             runningJobMap.remove(runJob.getJobId());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
     }
@@ -134,7 +135,9 @@ public class CommandRunner implements Runnable {
         PrintWriter writer = new PrintWriter(tmpFileName, "UTF-8");
         writer.println(runJob.getJobCommand());
         writer.close();
-        Runtime.getRuntime().exec("chmod 777 " + tmpFileName).waitFor();
+        Runtime.getRuntime()
+               .exec("chmod 777 " + tmpFileName)
+               .waitFor();
         ProcessBuilder pb = new ProcessBuilder("./" + tmpFileName);
         return pb.start();
     }

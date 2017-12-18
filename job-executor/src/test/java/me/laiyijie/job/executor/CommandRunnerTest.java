@@ -22,10 +22,6 @@ public class CommandRunnerTest {
     public void testRun() throws InterruptedException {
 
         runnerService.runShell(new RunJobMsg(1,1,1,"ping 127.0.0.1"));
-        Thread.sleep(1000);
 
-        runnerService.stopShell(new StopJobMsg(1));
-
-        Thread.sleep(10000);
     }
 }
