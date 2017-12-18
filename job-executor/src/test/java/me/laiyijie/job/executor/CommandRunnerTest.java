@@ -2,6 +2,7 @@ package me.laiyijie.job.executor;
 
 import me.laiyijie.job.executor.service.JobRunnerService;
 import me.laiyijie.job.message.executor.RunJobMsg;
+import me.laiyijie.job.message.executor.StopJobMsg;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ public class CommandRunnerTest {
     @Test
     public void testRun() throws InterruptedException {
 
-        runnerService.runShell(new RunJobMsg(1,1,1,"pwd"));
+        runnerService.runShell(new RunJobMsg(1,1,1,"ping 127.0.0.1"));
+        Thread.sleep(1000);
+
+        runnerService.stopShell(new StopJobMsg(1));
+
+        Thread.sleep(10000);
     }
 }

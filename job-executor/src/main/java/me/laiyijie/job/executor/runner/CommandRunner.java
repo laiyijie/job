@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
@@ -25,6 +26,7 @@ public class CommandRunner implements Runnable {
     private RunJobMsg runJob;
     private Executor executor;
     private String executorName;
+    private String tmpFileName;
 
     public CommandRunner(RunJobMsg runJob, JobQueueService jobQueueService,
                          ConcurrentHashMap<Integer, CommandRunner> runningJobMap,
@@ -68,8 +70,30 @@ public class CommandRunner implements Runnable {
             collectLog(proc);
 
             while (proc.isAlive()) {
+                log.debug("stop status????::::" + stop);
                 if (stop) {
-                    proc.destroyForcibly();
+                    log.info("in stoping!!!!");
+                    switch (osType) {
+                        case Linux:{
+                            Field f = proc.getClass().getDeclaredField("pid");
+                            f.setAccessible(true);
+                            int pid = (int) f.get(proc);
+                            log.info("pid:" + pid);
+                            Runtime.getRuntime().exec("kill -9 " + pid);
+                        }
+
+                            break;
+                        case Windows:{
+                            Field f = proc.getClass().getDeclaredField("pid");
+                            f.setAccessible(true);
+                            int pid = (int) f.get(proc);
+                            log.info("pid:" + pid);
+                        }
+
+                            break;
+                    }
+
+
                     sendCurrentJobStatus(JobStatusMsg.STOPPED);
                     runningJobMap.remove(runJob.getJobId());
                     log.info(" JOB_STOPPED: " + runJob.getJobId());
@@ -98,11 +122,15 @@ public class CommandRunner implements Runnable {
             log.error(getTrace(ex));
             sendCurrentJobStatus(JobStatusMsg.FAILED);
             runningJobMap.remove(runJob.getJobId());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
         }
     }
 
     private Process runShellInLinux() throws IOException, InterruptedException {
-        String tmpFileName = "tmp_job_" + System.currentTimeMillis() + ".sh";
+        tmpFileName = "tmp_job_" + System.currentTimeMillis() + ".sh";
         PrintWriter writer = new PrintWriter(tmpFileName, "UTF-8");
         writer.println(runJob.getJobCommand());
         writer.close();
@@ -112,7 +140,7 @@ public class CommandRunner implements Runnable {
     }
 
     private Process runBatInWindows() throws IOException, InterruptedException {
-        String tmpFileName = "tmp_job_" + System.currentTimeMillis() + ".bat";
+        tmpFileName = "tmp_job_" + System.currentTimeMillis() + ".bat";
         PrintWriter writer = new PrintWriter(tmpFileName, "UTF-8");
         writer.println(runJob.getJobCommand());
         writer.close();
