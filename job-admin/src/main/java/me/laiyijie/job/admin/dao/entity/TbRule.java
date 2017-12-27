@@ -1,6 +1,7 @@
 package me.laiyijie.job.admin.dao.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 @Table(name = "rule")
 public class TbRule {
     @Id
+    @GeneratedValue
     private Integer id;
 
     private String pattern;
