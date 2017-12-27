@@ -82,11 +82,12 @@ public class WorkFlowSchedule {
                 boolean isRetry = false;
                 for (TbJob job : tbJobs) {
                     if (RunningStatus.FAILED.equals(job.getStatus())) {
-                        if (job.getRetryFlag() && job.getRetryTimes() < job.getMaxRetryTimes()) {
-                            job.setRetryTimes(job.getRetryTimes() + 1);
-                            job.setRetryFlag(false);
+                        // retry the rule
+                        if (job.getRuleRetryFlag() && job.getRuleRetryTimes() < job.getRuleMaxRetryTimes()){
+                            job.setRuleRetryTimes(job.getRuleRetryTimes() + 1);
+                            job.setRuleRetryFlag(false);
                             tbJobRepository.save(job);
-                            workFlowService.runJob(job.getId());
+                            workFlowService.internalRunJob(job.getId());
                             isRetry = true;
                         }
                     }

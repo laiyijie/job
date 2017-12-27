@@ -17,7 +17,7 @@ public class TbRule {
 
     private String script;
 
-    private String retryTimes;
+    private Integer retryTimes;
 
     public Integer getId() {
         return id;
@@ -43,11 +43,11 @@ public class TbRule {
         this.script = script;
     }
 
-    public String getRetryTimes() {
+    public Integer getRetryTimes() {
         return retryTimes;
     }
 
-    public void setRetryTimes(String retryTimes) {
+    public void setRetryTimes(Integer retryTimes) {
         this.retryTimes = retryTimes;
     }
 }

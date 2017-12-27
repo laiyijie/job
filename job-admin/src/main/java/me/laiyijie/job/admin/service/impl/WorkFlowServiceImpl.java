@@ -208,6 +208,22 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
     @Override
     public void runJob(Integer jobId) {
+        // reset the job retry max
+        TbJob job = tbJobRepository.findOne(jobId);
+        if (job == null)
+            return;
+        job.setRuleRetryTimes(0);
+        job.setRuleRetryFlag(false);
+        job.setRuleMaxRetryTimes(0);
+
+        job.setRetryFlag(false);
+        job.setRetryTimes(0);
+        tbJobRepository.save(job);
+        internalRunJob(jobId);
+    }
+
+    @Override
+    public void internalRunJob(Integer jobId) {
         TbJob job = tbJobRepository.findOne(jobId);
         if (job == null)
             return;

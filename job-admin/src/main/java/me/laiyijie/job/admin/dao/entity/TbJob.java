@@ -23,6 +23,10 @@ public class TbJob {
     private Integer maxRetryTimes;
     private Boolean retryFlag;
 
+    private Boolean ruleRetryFlag;
+    private Integer ruleRetryTimes;
+    private Integer ruleMaxRetryTimes;
+
     @ManyToOne
     @JoinColumn(name = "job_group_id")
     private TbJobGroup jobGroup;
@@ -135,5 +139,51 @@ public class TbJob {
 
     public void setRetryFlag(Boolean retryFlag) {
         this.retryFlag = retryFlag;
+    }
+
+    public Boolean getRuleRetryFlag() {
+        return ruleRetryFlag;
+    }
+
+    public void setRuleRetryFlag(Boolean ruleRetryFlag) {
+        this.ruleRetryFlag = ruleRetryFlag;
+    }
+
+    public Integer getRuleRetryTimes() {
+        return ruleRetryTimes;
+    }
+
+    public void setRuleRetryTimes(Integer ruleRetryTimes) {
+        this.ruleRetryTimes = ruleRetryTimes;
+    }
+
+    public Integer getRuleMaxRetryTimes() {
+        return ruleMaxRetryTimes;
+    }
+
+    public void setRuleMaxRetryTimes(Integer ruleMaxRetryTimes) {
+        this.ruleMaxRetryTimes = ruleMaxRetryTimes;
+    }
+
+    @Override
+    public String toString() {
+        return "TbJob{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", script='" + script + '\'' +
+                ", lastRunningBeatTime=" + lastRunningBeatTime +
+                ", retryRegex='" + retryRegex + '\'' +
+                ", retryTimes=" + retryTimes +
+                ", maxRetryTimes=" + maxRetryTimes +
+                ", retryFlag=" + retryFlag +
+                ", ruleRetryFlag=" + ruleRetryFlag +
+                ", ruleRetryTimes=" + ruleRetryTimes +
+                ", ruleMaxRetryTimes=" + ruleMaxRetryTimes +
+                ", jobGroup=" + jobGroup +
+                ", executorGroup=" + executorGroup +
+                ", currentExecutor=" + currentExecutor +
+                '}';
     }
 }
