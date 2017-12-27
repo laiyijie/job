@@ -12,4 +12,6 @@ public interface RuleService {
     void modifyRule(TbRule rule);
 
     TbRule createRule(TbRule rule);
+
+
 }
