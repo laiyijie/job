@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Component
 @RabbitListener(queues = "#{jobQueueNameService.getLogQueueName()}")
+@Transactional
 public class LogHandler {
     private Logger log = LoggerFactory.getLogger(LogHandler.class);
     @Autowired
@@ -38,12 +40,9 @@ public class LogHandler {
     private TbJobRepository tbJobRepository;
     @Autowired
     private TbRuleRepository tbRuleRepository;
-    private Executor ex = Executors.newCachedThreadPool();
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
-        ex.execute(()-> {
-                    simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
-                });
+        simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
         log.info(runningLogMsg.toString());
         if (runningLogMsg.getError()) {
             TbJobErrorLog tbJobErrorLog = new TbJobErrorLog();

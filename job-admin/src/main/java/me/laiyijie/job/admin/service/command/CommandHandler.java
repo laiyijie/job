@@ -21,6 +21,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -29,6 +30,7 @@ import java.util.concurrent.Executors;
  */
 @RabbitListener(queues = "#{jobQueueNameService.getCommandQueueName()}")
 @Component
+@Transactional
 public class CommandHandler {
     private Logger log = LoggerFactory.getLogger(CommandHandler.class);
 
@@ -41,8 +43,6 @@ public class CommandHandler {
     private TbJobRepository tbJobRepository;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
-
-    private Executor ex = Executors.newCachedThreadPool();
 
     @RabbitHandler
     public void handle(HeartBeatMsg heartBeatMsg) {
@@ -85,9 +85,7 @@ public class CommandHandler {
         tbJob.setStatus(jobStatusMsg.getStatus());
         tbJob.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(tbJob);
-        ex.execute(()->{
-            simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
-        });
+        simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
     }
 
     @RabbitHandler
@@ -100,9 +98,7 @@ public class CommandHandler {
         tbExecutor.setTotalMemory(systemInfoMsg.getTotalPhysicalMemory());
         tbExecutor.setCpuLoad(systemInfoMsg.getCpuLoad());
         tbExecutorRepository.save(tbExecutor);
-        ex.execute(()-> {
-            simpMessagingTemplate.convertAndSend("/topic/sysinfo", systemInfoMsg);
-        });
+        simpMessagingTemplate.convertAndSend("/topic/sysinfo", systemInfoMsg);
     }
 
 }
