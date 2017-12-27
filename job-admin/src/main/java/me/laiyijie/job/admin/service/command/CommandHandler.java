@@ -18,7 +18,11 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * Created by laiyijie on 11/30/17.
@@ -37,6 +41,8 @@ public class CommandHandler {
     private TbJobRepository tbJobRepository;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    private Executor ex = Executors.newCachedThreadPool();
 
     @RabbitHandler
     public void handle(HeartBeatMsg heartBeatMsg) {
@@ -79,7 +85,9 @@ public class CommandHandler {
         tbJob.setStatus(jobStatusMsg.getStatus());
         tbJob.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(tbJob);
-        simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
+        ex.execute(()->{
+            simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
+        });
     }
 
     @RabbitHandler
@@ -92,7 +100,9 @@ public class CommandHandler {
         tbExecutor.setTotalMemory(systemInfoMsg.getTotalPhysicalMemory());
         tbExecutor.setCpuLoad(systemInfoMsg.getCpuLoad());
         tbExecutorRepository.save(tbExecutor);
-        simpMessagingTemplate.convertAndSend("/topic/sysinfo", systemInfoMsg);
+        ex.execute(()-> {
+            simpMessagingTemplate.convertAndSend("/topic/sysinfo", systemInfoMsg);
+        });
     }
 
 }

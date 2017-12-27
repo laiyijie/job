@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -36,10 +38,12 @@ public class LogHandler {
     private TbJobRepository tbJobRepository;
     @Autowired
     private TbRuleRepository tbRuleRepository;
-
+    private Executor ex = Executors.newCachedThreadPool();
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
-        simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
+        ex.execute(()-> {
+                    simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
+                });
         log.info(runningLogMsg.toString());
         if (runningLogMsg.getError()) {
             TbJobErrorLog tbJobErrorLog = new TbJobErrorLog();
