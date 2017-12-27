@@ -82,10 +82,12 @@ public class CommandHandler {
                 RunningStatus.FAILED.equals(tbJob.getStatus())) {
             return;
         }
+        if (!jobStatusMsg.getStatus().equals(tbJob.getStatus())){
+            simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
+        }
         tbJob.setStatus(jobStatusMsg.getStatus());
         tbJob.setLastRunningBeatTime(System.currentTimeMillis());
         tbJobRepository.save(tbJob);
-        simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
     }
 
     @RabbitHandler
