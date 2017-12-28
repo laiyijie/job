@@ -15,4 +15,8 @@ public interface TbJobErrorLogRepository extends CrudRepository<TbJobErrorLog, L
     List<TbJobErrorLog> findAllByOrderByLogTimeDesc(Pageable pageable);
 
     List<TbJobErrorLog> findAllByJobIdOrderByLogTimeDesc(Integer jobId, Pageable pageable);
+
+    List<TbJobErrorLog> findAllByJobIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Integer jobId, Long maxTime, Long minTime, Pageable pageable);
+
+    List<TbJobErrorLog> findAllByLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Long maxTime, Long minTime, Pageable pageable);
 }
