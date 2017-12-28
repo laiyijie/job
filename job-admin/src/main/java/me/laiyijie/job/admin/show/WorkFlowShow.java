@@ -84,7 +84,7 @@ public class WorkFlowShow {
             }
         }
         ErrorLogResponse errorLogResponse = new ErrorLogResponse();
-        errorLogResponse.setTotalPage(result.getTotalPages());
+        errorLogResponse.setTotalRows(result.getTotalElements());
         errorLogResponse.setLogs(
                 result
                         .getContent()
