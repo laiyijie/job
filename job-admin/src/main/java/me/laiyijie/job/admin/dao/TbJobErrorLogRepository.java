@@ -12,11 +12,15 @@ import java.util.List;
  */
 public interface TbJobErrorLogRepository extends CrudRepository<TbJobErrorLog, Long> {
 
-    List<TbJobErrorLog> findAllByOrderByLogTimeDesc(Pageable pageable);
+    Page<TbJobErrorLog> findAllByOrderByLogTimeDesc(Pageable pageable);
 
-    List<TbJobErrorLog> findAllByJobIdOrderByLogTimeDesc(Integer jobId, Pageable pageable);
+    Page<TbJobErrorLog> findAllByJobIdOrderByLogTimeDesc(Integer jobId, Pageable pageable);
 
-    List<TbJobErrorLog> findAllByJobIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Integer jobId, Long maxTime, Long minTime, Pageable pageable);
+    Page<TbJobErrorLog> findAllByJobIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Integer jobId, Long maxTime, Long minTime, Pageable pageable);
 
-    List<TbJobErrorLog> findAllByLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Long maxTime, Long minTime, Pageable pageable);
+    Page<TbJobErrorLog> findAllByWorkflowIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Integer workflowId, Long maxTime, Long minTime, Pageable pageable);
+
+    Page<TbJobErrorLog> findAllByLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Long maxTime, Long minTime, Pageable pageable);
+
+    Page<TbJobErrorLog> findAllByJobIdAndWorkflowIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(Integer jobId, Integer workflowId, Long maxTime, Long minTime, Pageable pageable);
 }

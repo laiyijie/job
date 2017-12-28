@@ -6,12 +6,10 @@ import me.laiyijie.job.admin.dao.TbJobRepository;
 import me.laiyijie.job.admin.dao.TbWorkFlowRepository;
 import me.laiyijie.job.admin.dao.entity.TbJobErrorLog;
 import me.laiyijie.job.admin.show.converter.WorkFlowConverter;
-import me.laiyijie.job.swagger.model.Job;
-import me.laiyijie.job.swagger.model.JobErrorLog;
-import me.laiyijie.job.swagger.model.JobGroup;
-import me.laiyijie.job.swagger.model.WorkFlow;
+import me.laiyijie.job.swagger.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -63,17 +61,37 @@ public class WorkFlowShow {
         return workFlowConverter.convertToWorkFlow(tbWorkFlowRepository.findOne(workFlowId));
     }
 
-    public List<JobErrorLog> getAllJobErrorLog(Pageable pageable) {
-        return tbJobErrorLogRepository.findAllByOrderByLogTimeDesc(pageable)
-                .stream()
-                .map((log) -> workFlowConverter.convertToJobErrorLog(log))
-                .collect(Collectors.toList());
-    }
+//    public List<JobErrorLog> getAllJobErrorLog(Pageable pageable) {
+//        return tbJobErrorLogRepository.findAllByOrderByLogTimeDesc(pageable)
+//                .stream()
+//                .map((log) -> workFlowConverter.convertToJobErrorLog(log))
+//                .collect(Collectors.toList());
+//    }
 
-    public List<JobErrorLog> getJobErrorLogByJobId(Integer jobId, Pageable pageable) {
-        return tbJobErrorLogRepository.findAllByJobIdOrderByLogTimeDesc(jobId, pageable)
-                .stream()
-                .map((log) -> workFlowConverter.convertToJobErrorLog(log))
-                .collect(Collectors.toList());
+    public ErrorLogResponse getJobErrorLogByJobIdAndWorkFlowIdAndTime(Integer jobId, Integer workflowId, Long startTime, Long endTime, Pageable pageable) {
+        Page<TbJobErrorLog> result;
+        if (jobId == null && workflowId == null) {
+            result = tbJobErrorLogRepository.findAllByLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(endTime, startTime, pageable);
+        } else {
+            if (jobId == null) {
+                result = tbJobErrorLogRepository.findAllByWorkflowIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(workflowId, endTime, startTime, pageable);
+            } else {
+                if (workflowId == null) {
+                    result = tbJobErrorLogRepository.findAllByJobIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(jobId, endTime, startTime, pageable);
+                } else {
+                    result = tbJobErrorLogRepository.findAllByJobIdAndWorkflowIdAndLogTimeLessThanAndLogTimeGreaterThanOrderByLogTimeDesc(jobId, workflowId, endTime, startTime, pageable);
+                }
+            }
+        }
+        ErrorLogResponse errorLogResponse = new ErrorLogResponse();
+        errorLogResponse.setTotalPage(result.getTotalPages());
+        errorLogResponse.setLogs(
+                result
+                        .getContent()
+                        .stream()
+                        .map((log) -> workFlowConverter.convertToJobErrorLog(log))
+                        .collect(Collectors.toList())
+        );
+        return errorLogResponse;
     }
 }

@@ -10,10 +10,7 @@ import me.laiyijie.job.admin.show.converter.WorkFlowConverter;
 import me.laiyijie.job.swagger.api.JobApi;
 import me.laiyijie.job.swagger.api.JobsApi;
 import me.laiyijie.job.swagger.api.WorkflowsApi;
-import me.laiyijie.job.swagger.model.Job;
-import me.laiyijie.job.swagger.model.JobErrorLog;
-import me.laiyijie.job.swagger.model.JobGroup;
-import me.laiyijie.job.swagger.model.WorkFlow;
+import me.laiyijie.job.swagger.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,9 +40,9 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     private WorkFlowConverter workFlowConverter;
 
     @Override
-    public ResponseEntity<List<JobErrorLog>> jobErrorLogsGet(@NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageSize", required = true) Integer pageSize, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageNum", required = true) Integer pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<ErrorLogResponse> jobErrorLogsGet(@NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageSize", required = true) Integer pageSize, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageNum", required = true) Integer pageNum, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "startTime", required = true) Long startTime, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "endTime", required = true) Long endTime, @ApiParam("") @RequestParam(value = "jobId", required = false) Integer jobId, @ApiParam("") @RequestParam(value = "workflowId", required = false) Integer workflowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Pageable pageable = new PageRequest(pageNum, pageSize);
-        return ResponseEntity.ok(workFlowShow.getAllJobErrorLog(pageable));
+        return ResponseEntity.ok(workFlowShow.getJobErrorLogByJobIdAndWorkFlowIdAndTime(jobId,workflowId,startTime,endTime,pageable));
     }
 
     @Override
@@ -87,10 +84,6 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
         return ResponseEntity.ok().build();
     }
 
-    @Override
-    public ResponseEntity<List<JobErrorLog>> jobsJobIdErrorLogGet(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageSize", required = true) Integer pageSize, @NotNull @ApiParam(value = "", required = true) @RequestParam(value = "pageNum", required = true) Integer pageNum, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return ResponseEntity.ok(workFlowShow.getJobErrorLogByJobId(jobId, new PageRequest(pageNum, pageSize)));
-    }
 
     @Override
     public ResponseEntity<Job> jobsJobIdGet(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
