@@ -79,6 +79,11 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
     }
 
     @Override
+    public ResponseEntity<List<Job>> jobsGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<Void> jobsJobIdDelete(@ApiParam(value = "", required = true) @PathVariable("jobId") Integer jobId, HttpServletRequest request, HttpServletResponse response) throws Exception {
         workFlowService.deleteJob(jobId);
         return ResponseEntity.ok().build();
