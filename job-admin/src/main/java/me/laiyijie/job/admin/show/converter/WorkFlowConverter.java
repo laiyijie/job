@@ -66,6 +66,7 @@ public class WorkFlowConverter {
         job.setRetryRegex(tbJob.getRetryRegex());
         job.setCurrentRetryTimes(tbJob.getRetryTimes());
         job.setMaxRetryTimes(tbJob.getMaxRetryTimes());
+        job.setAlgorithm(tbJob.getAlgorithm());
         return job;
     }
 
@@ -94,6 +95,7 @@ public class WorkFlowConverter {
         tbJob.setMaxRetryTimes(job.getMaxRetryTimes());
         tbJob.setRetryRegex(job.getRetryRegex());
         tbJob.setJobGroup(tbJobGroupRepository.findOne(job.getJobGroupId()));
+        tbJob.setAlgorithm(job.getAlgorithm());
         return tbJob;
     }
 

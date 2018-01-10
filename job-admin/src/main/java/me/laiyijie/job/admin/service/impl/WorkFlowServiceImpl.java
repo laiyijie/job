@@ -9,13 +9,13 @@ import me.laiyijie.job.admin.service.mq.JobQueueService;
 import me.laiyijie.job.message.RunningStatus;
 import me.laiyijie.job.message.executor.RunJobMsg;
 import me.laiyijie.job.message.executor.StopJobMsg;
-import me.laiyijie.job.swagger.model.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -119,6 +119,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         tbJob.setScript(job.getScript());
         tbJob.setRetryRegex(job.getRetryRegex());
         tbJob.setMaxRetryTimes(job.getMaxRetryTimes());
+        tbJob.setAlgorithm(job.getAlgorithm());
         return tbJobRepository.save(tbJob);
     }
 
@@ -229,24 +230,32 @@ public class WorkFlowServiceImpl implements WorkFlowService {
             return;
         if (RunningStatus.RUNNING.equals(job.getStatus()))
             return;
-        TbExecutor tbExecutor = getSuitableExecutorFromExecutorGroup(
-                job.getExecutorGroup());
-        if (tbExecutor == null) {
+        List<TbExecutor> executors = new ArrayList<>();
+        if (ALGORITHM_ALL_ONLINE_EXECUTOR.equals(job.getAlgorithm())) {
+            executors = tbExecutorRepository.findByOnlineStatus(TbExecutor.ONLINE);
+        } else {
+            TbExecutor tbExecutor = getSuitableExecutorsFromExecutorGroup(
+                    job.getExecutorGroup());
+            executors.add(tbExecutor);
+        }
+        if (executors.isEmpty()) {
             job.setStatus(RunningStatus.FAILED);
             log.error("job_id: " + jobId + "  executor_group_name:" + job.getExecutorGroup()
                     .getName() + " error msg: no executors online ");
             tbJobRepository.save(job);
             return;
         }
-        jobQueueService.sendRunJobToExecutor(tbExecutor.getName(),
-                new RunJobMsg(job.getJobGroup()
-                        .getWorkFlow()
-                        .getId(), job.getJobGroup()
-                        .getId(), job.getId(), job.getScript()));
+        for (TbExecutor tbExecutor : executors) {
+            jobQueueService.sendRunJobToExecutor(tbExecutor.getName(),
+                    new RunJobMsg(job.getJobGroup()
+                            .getWorkFlow()
+                            .getId(), job.getJobGroup()
+                            .getId(), job.getId(), job.getScript()));
+        }
 
         job.setStatus(RunningStatus.RUNNING);
         job.setLastRunningBeatTime(System.currentTimeMillis());
-        job.setCurrentExecutor(tbExecutor);
+        job.setCurrentExecutor(executors.get(0));
         tbJobRepository.save(job);
     }
 
@@ -262,7 +271,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
     }
 
     //TODO algorithm
-    private TbExecutor getSuitableExecutorFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
+    private TbExecutor getSuitableExecutorsFromExecutorGroup(TbExecutorGroup tbExecutorGroup) {
         List<TbExecutor> tbExecutors = tbExecutorRepository
                 .findByExecutorGroup_NameAndOnlineStatus(tbExecutorGroup.getName(), TbExecutor.ONLINE);
         if (tbExecutors.isEmpty())

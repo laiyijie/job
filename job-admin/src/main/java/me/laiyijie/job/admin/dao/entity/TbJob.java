@@ -17,7 +17,7 @@ public class TbJob {
     private String script;
 
     private Long lastRunningBeatTime;
-    
+
     private String retryRegex;
     private Integer retryTimes;
     private Integer maxRetryTimes;
@@ -26,6 +26,8 @@ public class TbJob {
     private Boolean ruleRetryFlag;
     private Integer ruleRetryTimes;
     private Integer ruleMaxRetryTimes;
+
+    private String algorithm;
 
     @ManyToOne
     @JoinColumn(name = "job_group_id")
@@ -165,6 +167,14 @@ public class TbJob {
         this.ruleMaxRetryTimes = ruleMaxRetryTimes;
     }
 
+    public String getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
+
     @Override
     public String toString() {
         return "TbJob{" +
@@ -181,6 +191,7 @@ public class TbJob {
                 ", ruleRetryFlag=" + ruleRetryFlag +
                 ", ruleRetryTimes=" + ruleRetryTimes +
                 ", ruleMaxRetryTimes=" + ruleMaxRetryTimes +
+                ", algorithm='" + algorithm + '\'' +
                 ", jobGroup=" + jobGroup +
                 ", executorGroup=" + executorGroup +
                 ", currentExecutor=" + currentExecutor +

@@ -78,10 +78,10 @@ public class CommandHandler {
         TbJob tbJob = tbJobRepository.findOne(jobStatusMsg.getJobId());
         if (tbJob == null)
             return;
-        if (RunningStatus.FINISHED.equals(tbJob.getStatus()) ||
-                RunningStatus.FAILED.equals(tbJob.getStatus())) {
-            return;
-        }
+//        if (RunningStatus.FINISHED.equals(tbJob.getStatus()) ||
+//                RunningStatus.FAILED.equals(tbJob.getStatus())) {
+//            return;
+//        }
         if (!jobStatusMsg.getStatus().equals(tbJob.getStatus())){
             simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
         }

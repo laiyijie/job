@@ -1,0 +1,2 @@
+
+ALTER TABLE job ADD COLUMN algorithm VARCHAR(45);

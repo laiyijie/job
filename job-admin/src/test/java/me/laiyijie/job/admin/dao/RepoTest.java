@@ -74,4 +74,13 @@ public class RepoTest {
         log.info(JSON.toJSONString(tbJobGroupRepository.findAll()));
     }
 
+    @Test
+    public void testSaveJob(){
+        TbJob tbJob = new TbJob();
+        tbJob.setName("ooo");
+        tbJobRepository.save(tbJob);
+
+        log.error(JSON.toJSONString(tbJobRepository.findAll()));
+    }
+
 }

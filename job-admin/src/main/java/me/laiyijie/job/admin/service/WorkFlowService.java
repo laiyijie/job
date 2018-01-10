@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
  * Created by laiyijie on 11/30/17.
  */
 public interface WorkFlowService {
+    String ALGORITHM_DEFAULT = "DEFAULT";
+    String ALGORITHM_ALL_ONLINE_EXECUTOR = "ALL_ONLINE_EXECUTOR";
 
     TbWorkFlow createWorkFlow(TbWorkFlow tbWorkFlow);
 
