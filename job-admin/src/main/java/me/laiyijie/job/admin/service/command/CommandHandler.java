@@ -82,6 +82,10 @@ public class CommandHandler {
 //                RunningStatus.FAILED.equals(tbJob.getStatus())) {
 //            return;
 //        }
+        if (RunningStatus.FINISHED.equals(tbJob.getStatus()) ||
+                RunningStatus.FAILED.equals(tbJob.getStatus())) {
+            log.info("job status change :" + jobStatusMsg);
+        }
         if (!jobStatusMsg.getStatus().equals(tbJob.getStatus())){
             simpMessagingTemplate.convertAndSend("/topic/status", jobStatusMsg);
         }
