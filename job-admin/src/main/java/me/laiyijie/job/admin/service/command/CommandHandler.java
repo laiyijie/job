@@ -53,7 +53,7 @@ public class CommandHandler {
         }
         TbExecutorGroup tbExecutorGroup = tbExecutorGroupRepository.findOne(heartBeatMsg.getGroupName());
         if (tbExecutorGroup == null) {
-            log.info("executor group not exist: " + heartBeatMsg);
+            log.error("executor group not exist: " + heartBeatMsg);
             return;
         }
 
@@ -74,7 +74,7 @@ public class CommandHandler {
 
     @RabbitHandler
     public void handle(JobStatusMsg jobStatusMsg) {
-        log.info("job status msg recevive: " + jobStatusMsg);
+        log.debug("job status msg recevive: " + jobStatusMsg);
         TbJob tbJob = tbJobRepository.findOne(jobStatusMsg.getJobId());
         if (tbJob == null)
             return;

@@ -43,7 +43,7 @@ public class LogHandler {
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
         simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
-        log.info(runningLogMsg.toString());
+        log.debug(runningLogMsg.toString());
         if (runningLogMsg.getError()) {
             TbJobErrorLog tbJobErrorLog = new TbJobErrorLog();
             tbJobErrorLog.setExecutorName(runningLogMsg.getExecutorName());
