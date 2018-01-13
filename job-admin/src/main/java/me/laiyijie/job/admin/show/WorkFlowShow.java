@@ -37,6 +37,11 @@ public class WorkFlowShow {
                 .map((job) -> workFlowConverter.convertToJob(job)).collect(Collectors.toList());
     }
 
+    public List<Job> getJobs() {
+        return tbJobRepository.findAll().stream()
+                .map((job) -> workFlowConverter.convertToJob(job)).collect(Collectors.toList());
+    }
+
     public Job getJob(Integer jobId) {
         return workFlowConverter.convertToJob(tbJobRepository.findOne(jobId));
     }
