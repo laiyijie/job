@@ -40,6 +40,7 @@ public class LogHandler {
     private TbJobRepository tbJobRepository;
     @Autowired
     private TbRuleRepository tbRuleRepository;
+
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
         simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
@@ -68,9 +69,10 @@ public class LogHandler {
             }
             for (TbRule rule : rules) {
                 if (tbJob.getScript() != null && tbJob.getScript().contains(rule.getScript())
-                        && RegexUtil.isMatch(rule.getPattern(), runningLogMsg.getContent())) {
+                        && runningLogMsg.getContent() != null
+                        && runningLogMsg.getContent().contains(rule.getPattern())) {
                     tbJob.setRuleMaxRetryTimes(rule.getRetryTimes());
-                    tbJob.setRetryFlag(true);
+                    tbJob.setRuleRetryFlag(true);
                     tbJobRepository.save(tbJob);
                     return;
                 }
