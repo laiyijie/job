@@ -80,7 +80,7 @@ public class JobController implements JobApi, JobsApi, WorkflowsApi {
 
     @Override
     public ResponseEntity<List<Job>> jobsGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        return null;
+        return ResponseEntity.ok(workFlowShow.getJobs());
     }
 
     @Override
