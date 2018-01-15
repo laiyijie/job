@@ -8,6 +8,7 @@ import me.laiyijie.job.admin.dao.entity.TbJobErrorLog;
 import me.laiyijie.job.admin.dao.entity.TbRule;
 import me.laiyijie.job.admin.service.mq.JobQueueNameService;
 import me.laiyijie.job.admin.service.util.RegexUtil;
+import me.laiyijie.job.message.command.SystemInfoMsg;
 import me.laiyijie.job.message.log.RunningLogMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class LogHandler {
 
     @RabbitHandler
     public void handle(RunningLogMsg runningLogMsg) {
+        runningLogMsg.setContent(getReEncodeString(runningLogMsg.getContent(),"UTF-8"));
         simpMessagingTemplate.convertAndSend("/topic/log", runningLogMsg);
         log.debug(runningLogMsg.toString());
         if (runningLogMsg.getError()) {
@@ -89,5 +91,49 @@ public class LogHandler {
             }
         }
 
+    }
+
+    public static String getReEncodeString(String str, String reEncodeType) {
+        String encode = "UTF-8";
+        String reEncodeString = "";
+        try {
+            reEncodeString = new String(str.getBytes(), encode);
+            if (str.equals(reEncodeString)) {
+                return new String(str.getBytes(encode), reEncodeType);
+            }
+        } catch (Exception exception2) {
+        }
+        encode = "GB2312";
+        try {
+            reEncodeString = new String(str.getBytes(), encode);
+            if (str.equals(reEncodeString)) {
+                return new String(str.getBytes(encode), reEncodeType);
+            }
+        } catch (Exception exception) {
+        }
+        encode = "ISO-8859-1";
+        try {
+            reEncodeString = new String(str.getBytes(), encode);
+            if (str.equals(reEncodeString)) {
+                return new String(str.getBytes(encode), reEncodeType);
+            }
+        } catch (Exception exception1) {
+        }
+
+        encode = "GBK";
+        try {
+            reEncodeString = new String(str.getBytes(), encode);
+            if (str.equals(reEncodeString)) {
+                return new String(str.getBytes(encode), reEncodeType);
+            }
+        } catch (Exception exception3) {
+        }
+        return str;
+    }
+
+    public static void main(String[] args){
+        String gb2312 = "你大爷";
+
+        System.out.println(getReEncodeString(gb2312,"UTF-8"));
     }
 }

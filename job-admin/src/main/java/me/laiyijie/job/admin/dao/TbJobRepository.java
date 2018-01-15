@@ -21,4 +21,6 @@ public interface TbJobRepository extends CrudRepository<TbJob, Integer> {
     List<TbJob> findAllByStatusAndLastRunningBeatTimeLessThan(String status, Long time);
 
     Long countByJobGroup_WorkFlow_IdAndStatus(Integer workFlowId, String status);
+
+    List<TbJob> findAllByStatusAndJobGroup_WorkFlow_StatusNot(String jobStatus, String workFlowStatus);
 }

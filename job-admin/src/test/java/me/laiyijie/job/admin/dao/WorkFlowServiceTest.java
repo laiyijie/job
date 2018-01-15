@@ -6,6 +6,7 @@ import me.laiyijie.job.admin.dao.entity.TbWorkFlow;
 import me.laiyijie.job.admin.service.WorkFlowService;
 import me.laiyijie.job.admin.show.converter.WorkFlowConverter;
 import me.laiyijie.job.message.RunningStatus;
+import me.laiyijie.job.message.command.SystemInfoMsg;
 import me.laiyijie.job.swagger.model.Job;
 import me.laiyijie.job.swagger.model.JobGroup;
 import org.flywaydb.core.Flyway;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by laiyijie on 12/4/17.
@@ -82,6 +84,11 @@ public class WorkFlowServiceTest {
         workFlowService.createJob(job);
         System.out.println(JSON.toJSONString(tbJobRepository.findAll(),true));
 
+        TbJob jobFailed = new TbJob();
+        jobFailed.setStatus(RunningStatus.FAILED);
+        jobFailed.setJobGroup(tbJobGroupRepository.findOne(1));
+        tbJobRepository.save(jobFailed);
+
         TbJob mjob = new TbJob();
         mjob.setId(job.getId());
         mjob.setName("jjssss");
@@ -89,7 +96,16 @@ public class WorkFlowServiceTest {
         mjob.setScript("ss");
         workFlowService.modifyJob(mjob);
         System.out.println(JSON.toJSONString(tbJobRepository.findAll(),true));
+
+
+
+        List<TbJob> tbJobs = tbJobRepository.findAllByStatusAndJobGroup_WorkFlow_StatusNot(RunningStatus.FAILED, RunningStatus.RUNNING);
+
+        System.out.println("______________________________________");
+        System.out.println(JSON.toJSONString(tbJobs,true));
     }
+
+
 
     @Test
     public void os_name() {

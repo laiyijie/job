@@ -83,7 +83,7 @@ public class WorkFlowSchedule {
                 for (TbJob job : tbJobs) {
                     if (RunningStatus.FAILED.equals(job.getStatus())) {
                         // retry the rule
-                        if (job.getRuleRetryFlag() && job.getRuleRetryTimes() < job.getRuleMaxRetryTimes()){
+                        if (job.getRuleRetryFlag() && job.getRuleRetryTimes() < job.getRuleMaxRetryTimes()) {
                             job.setRuleRetryTimes(job.getRuleRetryTimes() + 1);
                             job.setRuleRetryFlag(false);
                             tbJobRepository.save(job);
@@ -125,6 +125,22 @@ public class WorkFlowSchedule {
             }
         }
 
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void retryNotRunningWorkFlowJob() {
+        List<TbJob> tbJobs = tbJobRepository.findAllByStatusAndJobGroup_WorkFlow_StatusNot(RunningStatus.FAILED, RunningStatus.RUNNING);
+        for (TbJob job : tbJobs) {
+            if (RunningStatus.FAILED.equals(job.getStatus())) {
+                // retry the rule
+                if (job.getRuleRetryFlag() && job.getRuleRetryTimes() < job.getRuleMaxRetryTimes()) {
+                    job.setRuleRetryTimes(job.getRuleRetryTimes() + 1);
+                    job.setRuleRetryFlag(false);
+                    tbJobRepository.save(job);
+                    workFlowService.internalRunJob(job.getId());
+                }
+            }
+        }
     }
 
     @Scheduled(fixedDelay = 1000)
